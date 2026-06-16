@@ -15,102 +15,210 @@
 </style>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel" data-presets="react">
-
+<script>
 // Production de base (boost 0 %) au niveau max. Le "100 %" du tableau = base × 2.
 const TYPES = {
-  champ:   { nom: "Champ",   res: "cereales", base: 168, accent: "#c98a3a", short: "Céréales" },
-  scierie: { nom: "Scierie", res: "bois",     base: 126, accent: "#6b8c4a", short: "Bois" },
-  usine:   { nom: "Usine",   res: "eau",      base: 130, accent: "#3a7d8c", short: "Eau" },
+  champ: {
+    nom: "Champ",
+    res: "cereales",
+    base: 168,
+    accent: "#c98a3a",
+    short: "Céréales"
+  },
+  scierie: {
+    nom: "Scierie",
+    res: "bois",
+    base: 126,
+    accent: "#6b8c4a",
+    short: "Bois"
+  },
+  usine: {
+    nom: "Usine",
+    res: "eau",
+    base: 130,
+    accent: "#3a7d8c",
+    short: "Eau"
+  }
 };
 const COST = {
-  soldat:    { c: 10, b: 5,  e: 2,  rate: 60, label: "Soldats",    color: "#b5402f" },
-  defenseur: { c: 5,  b: 10, e: 10, rate: 40, label: "Défenseurs", color: "#3a6b8c" },
+  soldat: {
+    c: 10,
+    b: 5,
+    e: 2,
+    rate: 60,
+    label: "Soldats",
+    color: "#b5402f"
+  },
+  defenseur: {
+    c: 5,
+    b: 10,
+    e: 10,
+    rate: 40,
+    label: "Défenseurs",
+    color: "#3a6b8c"
+  }
 };
-
 let _id = 100;
 const uid = () => ++_id;
 
 // ===== Wrapper avec onglets =====
 function App() {
   const [tab, setTab] = React.useState("hubs");
-  return (
-    <div style={W.page}>
-      <div style={W.tabsWrap}>
-        <div style={W.tabs}>
-          <button style={{ ...W.tab, ...(tab === "hubs" ? W.tabOn : {}) }}
-            onClick={() => setTab("hubs")}>Hubs &amp; villes</button>
-          <button style={{ ...W.tab, ...(tab === "seuils" ? W.tabOn : {}) }}
-            onClick={() => setTab("seuils")}>Seuils de boost</button>
-          <button style={{ ...W.tab, ...(tab === "calc" ? W.tabOn : {}) }}
-            onClick={() => setTab("calc")}>Calculateur</button>
-          <button style={{ ...W.tab, ...(tab === "plan" ? W.tabOn : {}) }}
-            onClick={() => setTab("plan")}>Plan type</button>
-        </div>
-      </div>
-      {tab === "hubs" ? <HubsVilles /> : tab === "seuils" ? <SeuilsBoost />
-        : tab === "calc" ? <Calculateur /> : <PlanOptimise />}
-    </div>
-  );
+  return /*#__PURE__*/React.createElement("div", {
+    style: W.page
+  }, /*#__PURE__*/React.createElement("div", {
+    style: W.tabsWrap
+  }, /*#__PURE__*/React.createElement("div", {
+    style: W.tabs
+  }, /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...W.tab,
+      ...(tab === "hubs" ? W.tabOn : {})
+    },
+    onClick: () => setTab("hubs")
+  }, "Hubs & villes"), /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...W.tab,
+      ...(tab === "seuils" ? W.tabOn : {})
+    },
+    onClick: () => setTab("seuils")
+  }, "Seuils de boost"), /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...W.tab,
+      ...(tab === "calc" ? W.tabOn : {})
+    },
+    onClick: () => setTab("calc")
+  }, "Calculateur"), /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...W.tab,
+      ...(tab === "plan" ? W.tabOn : {})
+    },
+    onClick: () => setTab("plan")
+  }, "Plan type"))), tab === "hubs" ? /*#__PURE__*/React.createElement(HubsVilles, null) : tab === "seuils" ? /*#__PURE__*/React.createElement(SeuilsBoost, null) : tab === "calc" ? /*#__PURE__*/React.createElement(Calculateur, null) : /*#__PURE__*/React.createElement(PlanOptimise, null));
 }
-
 const W = {
-  page: { minHeight: "100vh", background: "#ece6da" },
-  tabsWrap: { background: "#ece6da", paddingTop: 24, display: "flex", justifyContent: "center" },
-  tabs: { display: "inline-flex", gap: 4, background: "#ded5c4", padding: 4, borderRadius: 5,
-    border: "1px solid #d0c6b2" },
-  tab: { border: "none", background: "transparent", padding: "9px 20px", fontSize: 13.5,
-    fontWeight: 700, color: "#8a7f6e", cursor: "pointer", borderRadius: 4,
-    fontFamily: "'Inter', system-ui, sans-serif", letterSpacing: "0.01em" },
-  tabOn: { background: "#2b2620", color: "#f7f3ec" },
+  page: {
+    minHeight: "100vh",
+    background: "#ece6da"
+  },
+  tabsWrap: {
+    background: "#ece6da",
+    paddingTop: 24,
+    display: "flex",
+    justifyContent: "center"
+  },
+  tabs: {
+    display: "inline-flex",
+    gap: 4,
+    background: "#ded5c4",
+    padding: 4,
+    borderRadius: 5,
+    border: "1px solid #d0c6b2"
+  },
+  tab: {
+    border: "none",
+    background: "transparent",
+    padding: "9px 20px",
+    fontSize: 13.5,
+    fontWeight: 700,
+    color: "#8a7f6e",
+    cursor: "pointer",
+    borderRadius: 4,
+    fontFamily: "'Inter', system-ui, sans-serif",
+    letterSpacing: "0.01em"
+  },
+  tabOn: {
+    background: "#2b2620",
+    color: "#f7f3ec"
+  }
 };
 
 // ===== Onglet Seuils de boost =====
 function SeuilsBoost() {
   // base niveau max (boost 0%)
-  const BASE = { champ: 168, scierie: 126, usine: 130 };
-  const RES = [
-    { key: "champ", res: "Céréales", accent: "#c98a3a", base: 168 },
-    { key: "scierie", res: "Bois", accent: "#6b8c4a", base: 126 },
-    { key: "usine", res: "Eau", accent: "#3a7d8c", base: 130 },
-  ];
-
+  const BASE = {
+    champ: 168,
+    scierie: 126,
+    usine: 130
+  };
+  const RES = [{
+    key: "champ",
+    res: "Céréales",
+    accent: "#c98a3a",
+    base: 168
+  }, {
+    key: "scierie",
+    res: "Bois",
+    accent: "#6b8c4a",
+    base: 126
+  }, {
+    key: "usine",
+    res: "Eau",
+    accent: "#3a7d8c",
+    base: 130
+  }];
   const [mode, setMode] = React.useState("plan"); // plan | libre
   const [casernes, setCasernes] = React.useState(8);
   const [unite, setUnite] = React.useState("soldat");
 
   // En mode libre : besoin saisi directement
-  const [besoinLibre, setBesoinLibre] = React.useState({ Céréales: 4800, Bois: 2400, Eau: 960 });
+  const [besoinLibre, setBesoinLibre] = React.useState({
+    Céréales: 4800,
+    Bois: 2400,
+    Eau: 960
+  });
 
   // Bâtiments déjà construits : liste par type, chacun avec son boost
-  const [existants, setExistants] = React.useState({ champ: [], scierie: [], usine: [] });
+  const [existants, setExistants] = React.useState({
+    champ: [],
+    scierie: [],
+    usine: []
+  });
   // boost choisi pour les bâtiments restants (mode "côté gauche")
   const [boostRestant, setBoostRestant] = React.useState(100);
-
-  const COSTH = unite === "soldat"
-    ? { Céréales: 600, Bois: 300, Eau: 120, rate: 60 }
-    : { Céréales: 200, Bois: 400, Eau: 400, rate: 40 };
+  const COSTH = unite === "soldat" ? {
+    Céréales: 600,
+    Bois: 300,
+    Eau: 120,
+    rate: 60
+  } : {
+    Céréales: 200,
+    Bois: 400,
+    Eau: 400,
+    rate: 40
+  };
 
   // Besoin total selon le mode
-  const besoin = mode === "plan"
-    ? { Céréales: casernes * COSTH.Céréales, Bois: casernes * COSTH.Bois, Eau: casernes * COSTH.Eau }
-    : besoinLibre;
-
-  const addExist = (type) =>
-    setExistants((e) => ({ ...e, [type]: [{ id: uid(), boost: 100 }, ...e[type]] }));
-  const setExistBoost = (type, id, boost) =>
-    setExistants((e) => ({ ...e, [type]: e[type].map((x) => x.id === id ? { ...x, boost } : x) }));
-  const removeExist = (type, id) =>
-    setExistants((e) => ({ ...e, [type]: e[type].filter((x) => x.id !== id) }));
-
-  const fmt = (n) => Math.round(n).toLocaleString("fr-FR");
+  const besoin = mode === "plan" ? {
+    Céréales: casernes * COSTH.Céréales,
+    Bois: casernes * COSTH.Bois,
+    Eau: casernes * COSTH.Eau
+  } : besoinLibre;
+  const addExist = type => setExistants(e => ({
+    ...e,
+    [type]: [{
+      id: uid(),
+      boost: 100
+    }, ...e[type]]
+  }));
+  const setExistBoost = (type, id, boost) => setExistants(e => ({
+    ...e,
+    [type]: e[type].map(x => x.id === id ? {
+      ...x,
+      boost
+    } : x)
+  }));
+  const removeExist = (type, id) => setExistants(e => ({
+    ...e,
+    [type]: e[type].filter(x => x.id !== id)
+  }));
+  const fmt = n => Math.round(n).toLocaleString("fr-FR");
 
   // Analyse par ressource
-  const analyse = RES.map((r) => {
+  const analyse = RES.map(r => {
     const need = besoin[r.res];
     // production déjà fournie par les bâtiments existants (avec leur boost)
     const prodExist = existants[r.key].reduce((s, b) => s + r.base * (1 + b.boost / 100), 0);
@@ -123,895 +231,1990 @@ function SeuilsBoost() {
     const nbA100 = reste <= 0 ? 0 : Math.ceil(reste / (r.base * 2));
     // boost min si on construit exactement nbA100 bâtiments
     const boostMinPourNbA100 = nbA100 === 0 ? 0 : Math.max(0, (reste / (nbA100 * r.base) - 1) * 100);
-    return { ...r, need, prodExist, reste, nbAuBoost, nbA100, boostMinPourNbA100,
-             couvert: reste <= 0, nbExist: existants[r.key].length };
+    return {
+      ...r,
+      need,
+      prodExist,
+      reste,
+      nbAuBoost,
+      nbA100,
+      boostMinPourNbA100,
+      couvert: reste <= 0,
+      nbExist: existants[r.key].length
+    };
   });
-
-  return (
-    <div style={S.page}>
-      <div style={S.frame}>
-        <header style={S.header}>
-          <div style={S.kicker}>GEOCRACY · PLANIFICATION</div>
-          <h1 style={S.title}>Seuils de boost</h1>
-          <p style={S.sub}>
-            Indique ce que tu veux produire et les bâtiments que tu as déjà (avec leur boost réel).
-            L'outil calcule les bâtiments restants à construire et le boost minimum requis pour faire tourner la production.
-          </p>
-
-          <div style={SB.modeRow}>
-            <div style={SB.toggle}>
-              <button style={{ ...SB.tBtn, ...(mode === "plan" ? SB.tOn : {}) }}
-                onClick={() => setMode("plan")}>Plan soldats/déf.</button>
-              <button style={{ ...SB.tBtn, ...(mode === "libre" ? SB.tOn : {}) }}
-                onClick={() => setMode("libre")}>Production libre</button>
-            </div>
-          </div>
-        </header>
-
-        {/* Paramètres du besoin */}
-        <section style={S.block}>
-          <div style={S.blockLabel}>1 — Production visée</div>
-          {mode === "plan" ? (
-            <div style={SB.planRow}>
-              <div style={SB.toggle}>
-                <button style={{ ...SB.tBtn, ...(unite === "soldat" ? SB.tOn : {}) }}
-                  onClick={() => setUnite("soldat")}>Soldats (60/h)</button>
-                <button style={{ ...SB.tBtn, ...(unite === "defenseur" ? SB.tOn : {}) }}
-                  onClick={() => setUnite("defenseur")}>Défenseurs (40/h)</button>
-              </div>
-              <label style={SB.casField}>
-                <span style={S.fieldLabel}>Casernes</span>
-                <input type="number" min="0" value={casernes}
-                  onChange={(e) => setCasernes(Math.max(0, +e.target.value || 0))} style={SB.casInput} />
-              </label>
-              <div style={SB.needBox}>
-                Besoin : <b style={{ color: "#c98a3a" }}>{fmt(besoin.Céréales)} C</b> ·{" "}
-                <b style={{ color: "#6b8c4a" }}>{fmt(besoin.Bois)} B</b> ·{" "}
-                <b style={{ color: "#3a7d8c" }}>{fmt(besoin.Eau)} E</b>
-                <span style={SB.needSub}> → {fmt(casernes * COSTH.rate)} {unite === "soldat" ? "soldats" : "déf."}/h</span>
-              </div>
-            </div>
-          ) : (
-            <div style={SB.libreGrid}>
-              {RES.map((r) => (
-                <label key={r.key} style={SB.libreField}>
-                  <span style={{ ...S.fieldLabel, color: r.accent }}>{r.res} /h voulus</span>
-                  <input type="number" min="0" value={besoinLibre[r.res]}
-                    onChange={(e) => setBesoinLibre((b) => ({ ...b, [r.res]: +e.target.value || 0 }))}
-                    style={SB.libreInput} />
-                </label>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* Bâtiments existants */}
-        <section style={S.block}>
-          <div style={S.blockLabel}>2 — Bâtiments déjà construits (avec leur boost réel)</div>
-          <div style={SB.existGrid}>
-            {RES.map((r) => (
-              <div key={r.key} style={{ ...SB.existCard, borderTopColor: r.accent }}>
-                <div style={SB.existHead}>
-                  <span style={{ ...SB.existTitle, color: r.accent }}>
-                    {r.key === "champ" ? "Champs" : r.key === "scierie" ? "Scieries" : "Usines"}
-                  </span>
-                  <span style={SB.existCount}>{existants[r.key].length}</span>
-                </div>
-                <div style={SB.existList}>
-                  {existants[r.key].map((b) => (
-                    <div key={b.id} style={SB.existRow}>
-                      <input type="range" min="0" max="100" step="5" value={b.boost}
-                        onChange={(e) => setExistBoost(r.key, b.id, +e.target.value)}
-                        style={{ ...SB.existRange, accentColor: r.accent }} />
-                      <span style={{ ...SB.existBoost, color: r.accent }}>{b.boost}%</span>
-                      <button style={SB.existDel} onClick={() => removeExist(r.key, b.id)}>✕</button>
-                    </div>
-                  ))}
-                </div>
-                <button style={{ ...SB.existAdd, color: r.accent, borderColor: r.accent }}
-                  onClick={() => addExist(r.key)}>+ ajouter</button>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Réglage boost des restants */}
-        <section style={S.block}>
-          <div style={S.blockLabel}>3 — Bâtiments restants à construire</div>
-          <label style={SB.boostRestantField}>
-            <span style={S.fieldLabel}>
-              Boost prévu sur les nouveaux bâtiments : <strong>{boostRestant}%</strong>
-              <span style={SB.boostHint}> (pour calculer combien il en faut)</span>
-            </span>
-            <input type="range" min="0" max="100" step="5" value={boostRestant}
-              onChange={(e) => setBoostRestant(+e.target.value)} style={S.range} />
-          </label>
-
-          <table style={S.table}>
-            <thead>
-              <tr>
-                <th style={S.th}>Ressource</th>
-                <th style={S.thR}>Besoin</th>
-                <th style={S.thR}>Déjà produit</th>
-                <th style={S.thR}>Reste</th>
-                <th style={S.thR}>À {boostRestant}% → nb</th>
-                <th style={S.thR}>Si nb mini → boost</th>
-              </tr>
-            </thead>
-            <tbody>
-              {analyse.map((a) => (
-                <tr key={a.key}>
-                  <td style={{ ...S.td, fontWeight: 600, color: a.accent }}>{a.res}</td>
-                  <td style={S.tdR}>{fmt(a.need)}</td>
-                  <td style={S.tdR}>{fmt(a.prodExist)}</td>
-                  <td style={{ ...S.tdR, fontWeight: 700, color: a.couvert ? "#3a7d3a" : "#2b2620" }}>
-                    {a.couvert ? "✓ couvert" : fmt(a.reste)}
-                  </td>
-                  <td style={S.tdR}>
-                    {a.couvert ? "—" : <b>{a.nbAuBoost} bât.</b>}
-                  </td>
-                  <td style={S.tdR}>
-                    {a.couvert ? "—"
-                      : <span><b>{a.nbA100} bât.</b> à <b style={{ color: a.accent }}>{Math.ceil(a.boostMinPourNbA100)}%</b> min</span>}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div style={SB.legend}>
-            <div><b>À {boostRestant}% → nb</b> : si tu construis tes nouveaux bâtiments au boost réglé ci-dessus, voici combien il en faut.</div>
-            <div><b>Si nb mini → boost</b> : si tu construis le minimum de bâtiments (comme à 100%), voici le boost minimum qu'ils doivent atteindre pour suffire.</div>
-          </div>
-        </section>
-
-        <footer style={S.footer}>
-          Base niveau max : champ 168 · scierie 126 · usine 130 (× (1 + boost)) · {unite === "soldat" ? "Soldat 600C/300B/120E" : "Défenseur 200C/400B/400E"} par caserne
-        </footer>
-      </div>
-    </div>
-  );
+  return /*#__PURE__*/React.createElement("div", {
+    style: S.page
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.frame
+  }, /*#__PURE__*/React.createElement("header", {
+    style: S.header
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.kicker
+  }, "GEOCRACY · PLANIFICATION"), /*#__PURE__*/React.createElement("h1", {
+    style: S.title
+  }, "Seuils de boost"), /*#__PURE__*/React.createElement("p", {
+    style: S.sub
+  }, "Indique ce que tu veux produire et les bâtiments que tu as déjà (avec leur boost réel). L'outil calcule les bâtiments restants à construire et le boost minimum requis pour faire tourner la production."), /*#__PURE__*/React.createElement("div", {
+    style: SB.modeRow
+  }, /*#__PURE__*/React.createElement("div", {
+    style: SB.toggle
+  }, /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...SB.tBtn,
+      ...(mode === "plan" ? SB.tOn : {})
+    },
+    onClick: () => setMode("plan")
+  }, "Plan soldats/déf."), /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...SB.tBtn,
+      ...(mode === "libre" ? SB.tOn : {})
+    },
+    onClick: () => setMode("libre")
+  }, "Production libre")))), /*#__PURE__*/React.createElement("section", {
+    style: S.block
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.blockLabel
+  }, "1 — Production visée"), mode === "plan" ? /*#__PURE__*/React.createElement("div", {
+    style: SB.planRow
+  }, /*#__PURE__*/React.createElement("div", {
+    style: SB.toggle
+  }, /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...SB.tBtn,
+      ...(unite === "soldat" ? SB.tOn : {})
+    },
+    onClick: () => setUnite("soldat")
+  }, "Soldats (60/h)"), /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...SB.tBtn,
+      ...(unite === "defenseur" ? SB.tOn : {})
+    },
+    onClick: () => setUnite("defenseur")
+  }, "Défenseurs (40/h)")), /*#__PURE__*/React.createElement("label", {
+    style: SB.casField
+  }, /*#__PURE__*/React.createElement("span", {
+    style: S.fieldLabel
+  }, "Casernes"), /*#__PURE__*/React.createElement("input", {
+    type: "number",
+    min: "0",
+    value: casernes,
+    onChange: e => setCasernes(Math.max(0, +e.target.value || 0)),
+    style: SB.casInput
+  })), /*#__PURE__*/React.createElement("div", {
+    style: SB.needBox
+  }, "Besoin : ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: "#c98a3a"
+    }
+  }, fmt(besoin.Céréales), " C"), " ·", " ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: "#6b8c4a"
+    }
+  }, fmt(besoin.Bois), " B"), " ·", " ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: "#3a7d8c"
+    }
+  }, fmt(besoin.Eau), " E"), /*#__PURE__*/React.createElement("span", {
+    style: SB.needSub
+  }, " → ", fmt(casernes * COSTH.rate), " ", unite === "soldat" ? "soldats" : "déf.", "/h"))) : /*#__PURE__*/React.createElement("div", {
+    style: SB.libreGrid
+  }, RES.map(r => /*#__PURE__*/React.createElement("label", {
+    key: r.key,
+    style: SB.libreField
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      ...S.fieldLabel,
+      color: r.accent
+    }
+  }, r.res, " /h voulus"), /*#__PURE__*/React.createElement("input", {
+    type: "number",
+    min: "0",
+    value: besoinLibre[r.res],
+    onChange: e => setBesoinLibre(b => ({
+      ...b,
+      [r.res]: +e.target.value || 0
+    })),
+    style: SB.libreInput
+  }))))), /*#__PURE__*/React.createElement("section", {
+    style: S.block
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.blockLabel
+  }, "2 — Bâtiments déjà construits (avec leur boost réel)"), /*#__PURE__*/React.createElement("div", {
+    style: SB.existGrid
+  }, RES.map(r => /*#__PURE__*/React.createElement("div", {
+    key: r.key,
+    style: {
+      ...SB.existCard,
+      borderTopColor: r.accent
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: SB.existHead
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      ...SB.existTitle,
+      color: r.accent
+    }
+  }, r.key === "champ" ? "Champs" : r.key === "scierie" ? "Scieries" : "Usines"), /*#__PURE__*/React.createElement("span", {
+    style: SB.existCount
+  }, existants[r.key].length)), /*#__PURE__*/React.createElement("div", {
+    style: SB.existList
+  }, existants[r.key].map(b => /*#__PURE__*/React.createElement("div", {
+    key: b.id,
+    style: SB.existRow
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "100",
+    step: "5",
+    value: b.boost,
+    onChange: e => setExistBoost(r.key, b.id, +e.target.value),
+    style: {
+      ...SB.existRange,
+      accentColor: r.accent
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      ...SB.existBoost,
+      color: r.accent
+    }
+  }, b.boost, "%"), /*#__PURE__*/React.createElement("button", {
+    style: SB.existDel,
+    onClick: () => removeExist(r.key, b.id)
+  }, "✕")))), /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...SB.existAdd,
+      color: r.accent,
+      borderColor: r.accent
+    },
+    onClick: () => addExist(r.key)
+  }, "+ ajouter"))))), /*#__PURE__*/React.createElement("section", {
+    style: S.block
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.blockLabel
+  }, "3 — Bâtiments restants à construire"), /*#__PURE__*/React.createElement("label", {
+    style: SB.boostRestantField
+  }, /*#__PURE__*/React.createElement("span", {
+    style: S.fieldLabel
+  }, "Boost prévu sur les nouveaux bâtiments : ", /*#__PURE__*/React.createElement("strong", null, boostRestant, "%"), /*#__PURE__*/React.createElement("span", {
+    style: SB.boostHint
+  }, " (pour calculer combien il en faut)")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "100",
+    step: "5",
+    value: boostRestant,
+    onChange: e => setBoostRestant(+e.target.value),
+    style: S.range
+  })), /*#__PURE__*/React.createElement("table", {
+    style: S.table
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", {
+    style: S.th
+  }, "Ressource"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "Besoin"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "Déjà produit"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "Reste"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "À ", boostRestant, "% → nb"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "Si nb mini → boost"))), /*#__PURE__*/React.createElement("tbody", null, analyse.map(a => /*#__PURE__*/React.createElement("tr", {
+    key: a.key
+  }, /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      fontWeight: 600,
+      color: a.accent
+    }
+  }, a.res), /*#__PURE__*/React.createElement("td", {
+    style: S.tdR
+  }, fmt(a.need)), /*#__PURE__*/React.createElement("td", {
+    style: S.tdR
+  }, fmt(a.prodExist)), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.tdR,
+      fontWeight: 700,
+      color: a.couvert ? "#3a7d3a" : "#2b2620"
+    }
+  }, a.couvert ? "✓ couvert" : fmt(a.reste)), /*#__PURE__*/React.createElement("td", {
+    style: S.tdR
+  }, a.couvert ? "—" : /*#__PURE__*/React.createElement("b", null, a.nbAuBoost, " bât.")), /*#__PURE__*/React.createElement("td", {
+    style: S.tdR
+  }, a.couvert ? "—" : /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("b", null, a.nbA100, " bât."), " à ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: a.accent
+    }
+  }, Math.ceil(a.boostMinPourNbA100), "%"), " min")))))), /*#__PURE__*/React.createElement("div", {
+    style: SB.legend
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "À ", boostRestant, "% → nb"), " : si tu construis tes nouveaux bâtiments au boost réglé ci-dessus, voici combien il en faut."), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", null, "Si nb mini → boost"), " : si tu construis le minimum de bâtiments (comme à 100%), voici le boost minimum qu'ils doivent atteindre pour suffire."))), /*#__PURE__*/React.createElement("footer", {
+    style: S.footer
+  }, "Base niveau max : champ 168 · scierie 126 · usine 130 (× (1 + boost)) · ", unite === "soldat" ? "Soldat 600C/300B/120E" : "Défenseur 200C/400B/400E", " par caserne")));
 }
-
 const SB = {
-  modeRow: { marginTop: 16 },
-  toggle: { display: "inline-flex", gap: 3, background: "#ece5d8", padding: 3, borderRadius: 4 },
-  tBtn: { border: "none", background: "transparent", padding: "7px 14px", fontSize: 12.5, fontWeight: 700,
-    color: "#8a7f6e", cursor: "pointer", borderRadius: 3, fontFamily: "inherit" },
-  tOn: { background: "#2b2620", color: "#f7f3ec" },
-  planRow: { display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 18 },
-  casField: { display: "block" },
-  casInput: { width: 80, boxSizing: "border-box", padding: "8px 10px", fontSize: 16, fontWeight: 700,
-    fontFamily: "Georgia, serif", border: "1px solid #d2c8b6", borderRadius: 3, background: "#fcfaf5", color: "#2b2620" },
-  needBox: { fontSize: 13.5, color: "#6b6155", paddingBottom: 6 },
-  needSub: { color: "#9a8f7e", fontSize: 12.5 },
-  libreGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 },
-  libreField: { display: "block" },
-  libreInput: { width: "100%", boxSizing: "border-box", padding: "9px 10px", fontSize: 15, fontWeight: 600,
-    border: "1px solid #d2c8b6", borderRadius: 3, background: "#fcfaf5", fontFamily: "inherit", color: "#2b2620" },
-  existGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 },
-  existCard: { background: "#fff", border: "1px solid #e0d7c6", borderTop: "3px solid", borderRadius: 3, padding: "12px 14px" },
-  existHead: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
-  existTitle: { fontWeight: 700, fontSize: 14 },
-  existCount: { fontSize: 13, fontWeight: 700, color: "#9a8f7e", background: "#f4efe6", borderRadius: 10, padding: "1px 9px" },
-  existList: { display: "flex", flexDirection: "column", gap: 6, marginBottom: 10, maxHeight: 180, overflowY: "auto" },
-  existRow: { display: "flex", alignItems: "center", gap: 7 },
-  existRange: { flex: 1, minWidth: 40 },
-  existBoost: { fontSize: 12, fontWeight: 700, width: 36, textAlign: "right" },
-  existDel: { border: "none", background: "transparent", color: "#c9bfa9", cursor: "pointer", fontSize: 12 },
-  existAdd: { width: "100%", background: "#fff", border: "1px solid", borderRadius: 3, padding: "6px",
-    fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" },
-  boostRestantField: { display: "block", marginBottom: 18 },
-  boostHint: { fontWeight: 400, color: "#a89e8a", fontSize: 11.5 },
-  legend: { marginTop: 16, fontSize: 12, color: "#8a7f6e", lineHeight: 1.6, display: "flex", flexDirection: "column", gap: 4 },
+  modeRow: {
+    marginTop: 16
+  },
+  toggle: {
+    display: "inline-flex",
+    gap: 3,
+    background: "#ece5d8",
+    padding: 3,
+    borderRadius: 4
+  },
+  tBtn: {
+    border: "none",
+    background: "transparent",
+    padding: "7px 14px",
+    fontSize: 12.5,
+    fontWeight: 700,
+    color: "#8a7f6e",
+    cursor: "pointer",
+    borderRadius: 3,
+    fontFamily: "inherit"
+  },
+  tOn: {
+    background: "#2b2620",
+    color: "#f7f3ec"
+  },
+  planRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "flex-end",
+    gap: 18
+  },
+  casField: {
+    display: "block"
+  },
+  casInput: {
+    width: 80,
+    boxSizing: "border-box",
+    padding: "8px 10px",
+    fontSize: 16,
+    fontWeight: 700,
+    fontFamily: "Georgia, serif",
+    border: "1px solid #d2c8b6",
+    borderRadius: 3,
+    background: "#fcfaf5",
+    color: "#2b2620"
+  },
+  needBox: {
+    fontSize: 13.5,
+    color: "#6b6155",
+    paddingBottom: 6
+  },
+  needSub: {
+    color: "#9a8f7e",
+    fontSize: 12.5
+  },
+  libreGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 14
+  },
+  libreField: {
+    display: "block"
+  },
+  libreInput: {
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "9px 10px",
+    fontSize: 15,
+    fontWeight: 600,
+    border: "1px solid #d2c8b6",
+    borderRadius: 3,
+    background: "#fcfaf5",
+    fontFamily: "inherit",
+    color: "#2b2620"
+  },
+  existGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 14
+  },
+  existCard: {
+    background: "#fff",
+    border: "1px solid #e0d7c6",
+    borderTop: "3px solid",
+    borderRadius: 3,
+    padding: "12px 14px"
+  },
+  existHead: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10
+  },
+  existTitle: {
+    fontWeight: 700,
+    fontSize: 14
+  },
+  existCount: {
+    fontSize: 13,
+    fontWeight: 700,
+    color: "#9a8f7e",
+    background: "#f4efe6",
+    borderRadius: 10,
+    padding: "1px 9px"
+  },
+  existList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 6,
+    marginBottom: 10,
+    maxHeight: 180,
+    overflowY: "auto"
+  },
+  existRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 7
+  },
+  existRange: {
+    flex: 1,
+    minWidth: 40
+  },
+  existBoost: {
+    fontSize: 12,
+    fontWeight: 700,
+    width: 36,
+    textAlign: "right"
+  },
+  existDel: {
+    border: "none",
+    background: "transparent",
+    color: "#c9bfa9",
+    cursor: "pointer",
+    fontSize: 12
+  },
+  existAdd: {
+    width: "100%",
+    background: "#fff",
+    border: "1px solid",
+    borderRadius: 3,
+    padding: "6px",
+    fontSize: 12,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontFamily: "inherit"
+  },
+  boostRestantField: {
+    display: "block",
+    marginBottom: 18
+  },
+  boostHint: {
+    fontWeight: 400,
+    color: "#a89e8a",
+    fontSize: 11.5
+  },
+  legend: {
+    marginTop: 16,
+    fontSize: 12,
+    color: "#8a7f6e",
+    lineHeight: 1.6,
+    display: "flex",
+    flexDirection: "column",
+    gap: 4
+  }
 };
 
 // ===== Onglet Hubs & villes : production réelle par ville, capacité de craft par hub =====
 function HubsVilles() {
   // Chaque hub a ses villes proches. Une ville = prod/h réelle (céréales/bois/eau) + nb casernes.
-  const [hubs, setHubs] = React.useState([
-    { id: 1, nom: "Hub 57", villes: [
-      { id: 11, nom: "Bébing",     c: 0, b: 0, e: 0, cas: 1 },
-      { id: 12, nom: "Bourscheid", c: 0, b: 0, e: 0, cas: 0 },
-    ]},
-  ]);
+  const [hubs, setHubs] = React.useState([{
+    id: 1,
+    nom: "Hub 57",
+    villes: [{
+      id: 11,
+      nom: "Bébing",
+      c: 0,
+      b: 0,
+      e: 0,
+      cas: 1
+    }, {
+      id: 12,
+      nom: "Bourscheid",
+      c: 0,
+      b: 0,
+      e: 0,
+      cas: 0
+    }]
+  }]);
   const [unite, setUnite] = React.useState("soldat"); // soldat | defenseur
 
-  const addHub = () =>
-    setHubs((h) => [{ id: uid(), nom: `Hub ${h.length + 1}`, villes: [] }, ...h]);
-  const removeHub = (id) => setHubs((h) => h.filter((x) => x.id !== id));
-  const renameHub = (id, nom) => setHubs((h) => h.map((x) => x.id === id ? { ...x, nom } : x));
-  const addVille = (hid) =>
-    setHubs((h) => h.map((x) => x.id === hid
-      ? { ...x, villes: [{ id: uid(), nom: "Nouvelle ville", c: 0, b: 0, e: 0, cas: 0 }, ...x.villes] }
-      : x));
-  const removeVille = (hid, vid) =>
-    setHubs((h) => h.map((x) => x.id === hid ? { ...x, villes: x.villes.filter((v) => v.id !== vid) } : x));
-  const setV = (hid, vid, field, val) =>
-    setHubs((h) => h.map((x) => x.id === hid
-      ? { ...x, villes: x.villes.map((v) => v.id === vid ? { ...v, [field]: val } : v) } : x));
+  const addHub = () => setHubs(h => [{
+    id: uid(),
+    nom: `Hub ${h.length + 1}`,
+    villes: []
+  }, ...h]);
+  const removeHub = id => setHubs(h => h.filter(x => x.id !== id));
+  const renameHub = (id, nom) => setHubs(h => h.map(x => x.id === id ? {
+    ...x,
+    nom
+  } : x));
+  const addVille = hid => setHubs(h => h.map(x => x.id === hid ? {
+    ...x,
+    villes: [{
+      id: uid(),
+      nom: "Nouvelle ville",
+      c: 0,
+      b: 0,
+      e: 0,
+      cas: 0
+    }, ...x.villes]
+  } : x));
+  const removeVille = (hid, vid) => setHubs(h => h.map(x => x.id === hid ? {
+    ...x,
+    villes: x.villes.filter(v => v.id !== vid)
+  } : x));
+  const setV = (hid, vid, field, val) => setHubs(h => h.map(x => x.id === hid ? {
+    ...x,
+    villes: x.villes.map(v => v.id === vid ? {
+      ...v,
+      [field]: val
+    } : v)
+  } : x));
 
   // Coûts d'une unité (par caserne/h) : soldat 60/h -> 600C/300B/120E, défenseur 40/h -> 200C/400B/400E
-  const COSTH = unite === "soldat"
-    ? { c: 600, b: 300, e: 120, rate: 60 }
-    : { c: 200, b: 400, e: 400, rate: 40 };
-
-  const fmt = (n) => Math.round(n).toLocaleString("fr-FR");
-  const num = (v) => (+v || 0);
+  const COSTH = unite === "soldat" ? {
+    c: 600,
+    b: 300,
+    e: 120,
+    rate: 60
+  } : {
+    c: 200,
+    b: 400,
+    e: 400,
+    rate: 40
+  };
+  const fmt = n => Math.round(n).toLocaleString("fr-FR");
+  const num = v => +v || 0;
 
   // Pour un hub : production cumulée de ses villes, et combien de casernes elles peuvent soutenir
-  const analyseHub = (hub) => {
+  const analyseHub = hub => {
     const prod = hub.villes.reduce((a, v) => ({
-      c: a.c + num(v.c), b: a.b + num(v.b), e: a.e + num(v.e),
-      cas: a.cas + num(v.cas),
-    }), { c: 0, b: 0, e: 0, cas: 0 });
+      c: a.c + num(v.c),
+      b: a.b + num(v.b),
+      e: a.e + num(v.e),
+      cas: a.cas + num(v.cas)
+    }), {
+      c: 0,
+      b: 0,
+      e: 0,
+      cas: 0
+    });
     // casernes soutenables par les ressources
     const limC = Math.floor(prod.c / COSTH.c);
     const limB = Math.floor(prod.b / COSTH.b);
     const limE = Math.floor(prod.e / COSTH.e);
     const maxCas = Math.min(limC, limB, limE);
     const lim = [["Céréales", limC], ["Bois", limB], ["Eau", limE]].sort((a, b) => a[1] - b[1])[0][0];
-    return { prod, maxCas, maxUnits: maxCas * COSTH.rate, lim,
-             // si des casernes sont déjà posées, leur conso
-             consoActuelle: { c: prod.cas * COSTH.c, b: prod.cas * COSTH.b, e: prod.cas * COSTH.e } };
+    return {
+      prod,
+      maxCas,
+      maxUnits: maxCas * COSTH.rate,
+      lim,
+      // si des casernes sont déjà posées, leur conso
+      consoActuelle: {
+        c: prod.cas * COSTH.c,
+        b: prod.cas * COSTH.b,
+        e: prod.cas * COSTH.e
+      }
+    };
   };
-
-  return (
-    <div style={S.page}>
-      <div style={S.frame}>
-        <header style={S.header}>
-          <div style={S.kicker}>GEOCRACY · ORGANISATION RÉELLE</div>
-          <h1 style={S.title}>Hubs &amp; villes</h1>
-          <p style={S.sub}>
-            Chaque hub puise dans ses villes proches. Saisis la production réelle par heure de chaque ville
-            (céréales, bois, eau) et son énergie. L'outil calcule combien de casernes chaque hub peut soutenir.
-          </p>
-          <div style={HV.uniteRow}>
-            <span style={S.fieldLabel}>Crafter en :</span>
-            <div style={HV.uniteToggle}>
-              <button style={{ ...HV.uniteBtn, ...(unite === "soldat" ? HV.uniteOn : {}) }}
-                onClick={() => setUnite("soldat")}>Soldats (60/h)</button>
-              <button style={{ ...HV.uniteBtn, ...(unite === "defenseur" ? HV.uniteOn : {}) }}
-                onClick={() => setUnite("defenseur")}>Défenseurs (40/h)</button>
-            </div>
-          </div>
-        </header>
-
-        <section style={S.block}>
-          <div style={S.blockLabelRow}>
-            <span style={S.blockLabel}>Tes hubs</span>
-            <button style={S.addVilleBtn} onClick={addHub}>+ Ajouter un hub</button>
-          </div>
-
-          {hubs.map((hub) => {
-            const a = analyseHub(hub);
-            return (
-              <div key={hub.id} style={HV.hubCard}>
-                <div style={HV.hubHead}>
-                  <input style={HV.hubNom} value={hub.nom}
-                    onChange={(e) => renameHub(hub.id, e.target.value)} />
-                  {hubs.length > 1 && (
-                    <button style={S.villeDel} onClick={() => removeHub(hub.id)}>✕ hub</button>
-                  )}
-                </div>
-
-                {/* En-tête colonnes */}
-                <div style={HV.gridHead}>
-                  <span>Ville</span>
-                  <span style={HV.r}>Céréales/h</span>
-                  <span style={HV.r}>Bois/h</span>
-                  <span style={HV.r}>Eau/h</span>
-                  <span style={HV.r}>Casernes</span>
-                  <span />
-                </div>
-
-                {hub.villes.map((v) => (
-                  <div key={v.id} style={HV.gridRow}>
-                    <input style={HV.cellNom} value={v.nom}
-                      onChange={(e) => setV(hub.id, v.id, "nom", e.target.value)} />
-                    <input type="number" style={HV.cell} value={v.c}
-                      onChange={(e) => setV(hub.id, v.id, "c", +e.target.value || 0)} />
-                    <input type="number" style={HV.cell} value={v.b}
-                      onChange={(e) => setV(hub.id, v.id, "b", +e.target.value || 0)} />
-                    <input type="number" style={HV.cell} value={v.e}
-                      onChange={(e) => setV(hub.id, v.id, "e", +e.target.value || 0)} />
-                    <input type="number" style={HV.cell} value={v.cas}
-                      onChange={(e) => setV(hub.id, v.id, "cas", +e.target.value || 0)} />
-                    <button style={HV.rowDel} onClick={() => removeVille(hub.id, v.id)}>✕</button>
-                  </div>
-                ))}
-
-                <button style={HV.addVille} onClick={() => addVille(hub.id)}>+ Ajouter une ville à ce hub</button>
-
-                {/* Résumé du hub */}
-                <div style={HV.summary}>
-                  <div style={HV.sumLine}>
-                    <span style={HV.sumLabel}>Production cumulée</span>
-                    <span style={HV.sumVals}>
-                      <b style={{ color: "#c98a3a" }}>{fmt(a.prod.c)} C</b>
-                      <b style={{ color: "#6b8c4a" }}>{fmt(a.prod.b)} B</b>
-                      <b style={{ color: "#3a7d8c" }}>{fmt(a.prod.e)} E</b>
-                    </span>
-                  </div>
-                  <div style={HV.bigResult}>
-                    <div>
-                      <div style={HV.bigLabel}>Casernes soutenables</div>
-                      <div style={HV.bigVal}>{a.maxCas}<span style={HV.bigUnit}> max</span></div>
-                    </div>
-                    <div style={HV.arrow}>→</div>
-                    <div>
-                      <div style={HV.bigLabel}>{unite === "soldat" ? "Soldats" : "Défenseurs"} / h</div>
-                      <div style={{ ...HV.bigVal, color: unite === "soldat" ? "#b5402f" : "#3a6b8c" }}>{fmt(a.maxUnits)}</div>
-                    </div>
-                    <div style={HV.limit}>
-                      limité par<br /><b>{a.lim}</b>
-                    </div>
-                  </div>
-                  {a.prod.cas > 0 && (
-                    <div style={HV.posed}>
-                      {a.prod.cas} casernes déjà posées · {fmt(a.prod.cas * COSTH.rate)} {unite === "soldat" ? "soldats" : "déf."}/h
-                      {a.prod.cas > a.maxCas
-                        ? <span style={{ color: "#c0392b" }}> — ⚠ trop pour la prod ({a.maxCas} soutenables)</span>
-                        : <span style={{ color: "#3a7d3a" }}> — ✓ soutenu, marge de {a.maxCas - a.prod.cas} caserne(s)</span>}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </section>
-
-        <footer style={S.footer}>
-          Saisis la production /h de chaque ville (lue en jeu). Soldat 600C/300B/120E par caserne · Défenseur 200C/400B/400E · 1 caserne = {COSTH.rate}/h
-        </footer>
-      </div>
-    </div>
-  );
+  return /*#__PURE__*/React.createElement("div", {
+    style: S.page
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.frame
+  }, /*#__PURE__*/React.createElement("header", {
+    style: S.header
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.kicker
+  }, "GEOCRACY · ORGANISATION RÉELLE"), /*#__PURE__*/React.createElement("h1", {
+    style: S.title
+  }, "Hubs & villes"), /*#__PURE__*/React.createElement("p", {
+    style: S.sub
+  }, "Chaque hub puise dans ses villes proches. Saisis la production réelle par heure de chaque ville (céréales, bois, eau) et son énergie. L'outil calcule combien de casernes chaque hub peut soutenir."), /*#__PURE__*/React.createElement("div", {
+    style: HV.uniteRow
+  }, /*#__PURE__*/React.createElement("span", {
+    style: S.fieldLabel
+  }, "Crafter en :"), /*#__PURE__*/React.createElement("div", {
+    style: HV.uniteToggle
+  }, /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...HV.uniteBtn,
+      ...(unite === "soldat" ? HV.uniteOn : {})
+    },
+    onClick: () => setUnite("soldat")
+  }, "Soldats (60/h)"), /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...HV.uniteBtn,
+      ...(unite === "defenseur" ? HV.uniteOn : {})
+    },
+    onClick: () => setUnite("defenseur")
+  }, "Défenseurs (40/h)")))), /*#__PURE__*/React.createElement("section", {
+    style: S.block
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.blockLabelRow
+  }, /*#__PURE__*/React.createElement("span", {
+    style: S.blockLabel
+  }, "Tes hubs"), /*#__PURE__*/React.createElement("button", {
+    style: S.addVilleBtn,
+    onClick: addHub
+  }, "+ Ajouter un hub")), hubs.map(hub => {
+    const a = analyseHub(hub);
+    return /*#__PURE__*/React.createElement("div", {
+      key: hub.id,
+      style: HV.hubCard
+    }, /*#__PURE__*/React.createElement("div", {
+      style: HV.hubHead
+    }, /*#__PURE__*/React.createElement("input", {
+      style: HV.hubNom,
+      value: hub.nom,
+      onChange: e => renameHub(hub.id, e.target.value)
+    }), hubs.length > 1 && /*#__PURE__*/React.createElement("button", {
+      style: S.villeDel,
+      onClick: () => removeHub(hub.id)
+    }, "✕ hub")), /*#__PURE__*/React.createElement("div", {
+      style: HV.gridHead
+    }, /*#__PURE__*/React.createElement("span", null, "Ville"), /*#__PURE__*/React.createElement("span", {
+      style: HV.r
+    }, "Céréales/h"), /*#__PURE__*/React.createElement("span", {
+      style: HV.r
+    }, "Bois/h"), /*#__PURE__*/React.createElement("span", {
+      style: HV.r
+    }, "Eau/h"), /*#__PURE__*/React.createElement("span", {
+      style: HV.r
+    }, "Casernes"), /*#__PURE__*/React.createElement("span", null)), hub.villes.map(v => /*#__PURE__*/React.createElement("div", {
+      key: v.id,
+      style: HV.gridRow
+    }, /*#__PURE__*/React.createElement("input", {
+      style: HV.cellNom,
+      value: v.nom,
+      onChange: e => setV(hub.id, v.id, "nom", e.target.value)
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "number",
+      style: HV.cell,
+      value: v.c,
+      onChange: e => setV(hub.id, v.id, "c", +e.target.value || 0)
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "number",
+      style: HV.cell,
+      value: v.b,
+      onChange: e => setV(hub.id, v.id, "b", +e.target.value || 0)
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "number",
+      style: HV.cell,
+      value: v.e,
+      onChange: e => setV(hub.id, v.id, "e", +e.target.value || 0)
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "number",
+      style: HV.cell,
+      value: v.cas,
+      onChange: e => setV(hub.id, v.id, "cas", +e.target.value || 0)
+    }), /*#__PURE__*/React.createElement("button", {
+      style: HV.rowDel,
+      onClick: () => removeVille(hub.id, v.id)
+    }, "✕"))), /*#__PURE__*/React.createElement("button", {
+      style: HV.addVille,
+      onClick: () => addVille(hub.id)
+    }, "+ Ajouter une ville à ce hub"), /*#__PURE__*/React.createElement("div", {
+      style: HV.summary
+    }, /*#__PURE__*/React.createElement("div", {
+      style: HV.sumLine
+    }, /*#__PURE__*/React.createElement("span", {
+      style: HV.sumLabel
+    }, "Production cumulée"), /*#__PURE__*/React.createElement("span", {
+      style: HV.sumVals
+    }, /*#__PURE__*/React.createElement("b", {
+      style: {
+        color: "#c98a3a"
+      }
+    }, fmt(a.prod.c), " C"), /*#__PURE__*/React.createElement("b", {
+      style: {
+        color: "#6b8c4a"
+      }
+    }, fmt(a.prod.b), " B"), /*#__PURE__*/React.createElement("b", {
+      style: {
+        color: "#3a7d8c"
+      }
+    }, fmt(a.prod.e), " E"))), /*#__PURE__*/React.createElement("div", {
+      style: HV.bigResult
+    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      style: HV.bigLabel
+    }, "Casernes soutenables"), /*#__PURE__*/React.createElement("div", {
+      style: HV.bigVal
+    }, a.maxCas, /*#__PURE__*/React.createElement("span", {
+      style: HV.bigUnit
+    }, " max"))), /*#__PURE__*/React.createElement("div", {
+      style: HV.arrow
+    }, "→"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      style: HV.bigLabel
+    }, unite === "soldat" ? "Soldats" : "Défenseurs", " / h"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        ...HV.bigVal,
+        color: unite === "soldat" ? "#b5402f" : "#3a6b8c"
+      }
+    }, fmt(a.maxUnits))), /*#__PURE__*/React.createElement("div", {
+      style: HV.limit
+    }, "limité par", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", null, a.lim))), a.prod.cas > 0 && /*#__PURE__*/React.createElement("div", {
+      style: HV.posed
+    }, a.prod.cas, " casernes déjà posées · ", fmt(a.prod.cas * COSTH.rate), " ", unite === "soldat" ? "soldats" : "déf.", "/h", a.prod.cas > a.maxCas ? /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: "#c0392b"
+      }
+    }, " — ⚠ trop pour la prod (", a.maxCas, " soutenables)") : /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: "#3a7d3a"
+      }
+    }, " — ✓ soutenu, marge de ", a.maxCas - a.prod.cas, " caserne(s)"))));
+  })), /*#__PURE__*/React.createElement("footer", {
+    style: S.footer
+  }, "Saisis la production /h de chaque ville (lue en jeu). Soldat 600C/300B/120E par caserne · Défenseur 200C/400B/400E · 1 caserne = ", COSTH.rate, "/h")));
 }
-
 const HV = {
-  uniteRow: { display: "flex", alignItems: "center", gap: 12, marginTop: 16 },
-  uniteToggle: { display: "inline-flex", gap: 3, background: "#ece5d8", padding: 3, borderRadius: 4 },
-  uniteBtn: { border: "none", background: "transparent", padding: "6px 12px", fontSize: 12, fontWeight: 700,
-    color: "#8a7f6e", cursor: "pointer", borderRadius: 3, fontFamily: "inherit" },
-  uniteOn: { background: "#2b2620", color: "#f7f3ec" },
-  hubCard: { background: "#fff", border: "1px solid #e0d7c6", borderRadius: 4, padding: 16, marginBottom: 16 },
-  hubHead: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
-  hubNom: { border: "none", borderBottom: "2px solid #2b2620", background: "transparent",
-    fontSize: 18, fontWeight: 700, fontFamily: "Georgia, serif", padding: "2px 0", color: "#2b2620", flex: 1 },
-  gridHead: { display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr 1fr 0.9fr 0.4fr", gap: 6,
-    fontSize: 10, fontWeight: 700, color: "#9a8f7e", textTransform: "uppercase", letterSpacing: "0.04em",
-    marginBottom: 6, padding: "0 2px" },
-  r: { textAlign: "right" },
-  gridRow: { display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr 1fr 0.9fr 0.4fr", gap: 6,
-    marginBottom: 6, alignItems: "center" },
-  cellNom: { border: "1px solid #e0d7c6", borderRadius: 3, padding: "7px 8px", fontSize: 13,
-    fontFamily: "inherit", background: "#fcfaf5", minWidth: 0 },
-  cell: { border: "1px solid #e0d7c6", borderRadius: 3, padding: "7px 6px", fontSize: 13, textAlign: "right",
-    fontFamily: "inherit", background: "#fcfaf5", minWidth: 0, fontVariantNumeric: "tabular-nums" },
-  rowDel: { border: "none", background: "transparent", color: "#c9bfa9", cursor: "pointer", fontSize: 13 },
-  addVille: { width: "100%", marginTop: 6, padding: "8px", background: "#f4efe6", border: "1px dashed #d2c8b6",
-    borderRadius: 3, fontSize: 12.5, fontWeight: 600, color: "#8a7f6e", cursor: "pointer", fontFamily: "inherit" },
-  summary: { marginTop: 14, paddingTop: 14, borderTop: "1px solid #ece5d8" },
-  sumLine: { display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 },
-  sumLabel: { fontSize: 12, color: "#6b6155", fontWeight: 600 },
-  sumVals: { display: "flex", gap: 12, fontSize: 13, fontVariantNumeric: "tabular-nums" },
-  warn: { marginTop: 10, padding: "8px 12px", background: "#fbeae8", border: "1px solid #c0392b",
-    borderRadius: 3, fontSize: 12, color: "#9a3324" },
-  bigResult: { display: "flex", alignItems: "center", gap: 18, marginTop: 14, padding: "14px 16px",
-    background: "#f7f3ec", borderRadius: 4, border: "1px solid #e6ddca" },
-  bigLabel: { fontSize: 11, color: "#9a8f7e", fontWeight: 600, marginBottom: 2 },
-  bigVal: { fontFamily: "Georgia, serif", fontSize: 28, fontWeight: 700, lineHeight: 1, color: "#2b2620" },
-  bigUnit: { fontSize: 13, color: "#9a8f7e", fontWeight: 400 },
-  arrow: { fontSize: 20, color: "#c9bfa9" },
-  limit: { marginLeft: "auto", fontSize: 11.5, color: "#8a7f6e", textAlign: "right", lineHeight: 1.4 },
-  posed: { marginTop: 10, fontSize: 12.5, color: "#6b6155" },
+  uniteRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    marginTop: 16
+  },
+  uniteToggle: {
+    display: "inline-flex",
+    gap: 3,
+    background: "#ece5d8",
+    padding: 3,
+    borderRadius: 4
+  },
+  uniteBtn: {
+    border: "none",
+    background: "transparent",
+    padding: "6px 12px",
+    fontSize: 12,
+    fontWeight: 700,
+    color: "#8a7f6e",
+    cursor: "pointer",
+    borderRadius: 3,
+    fontFamily: "inherit"
+  },
+  uniteOn: {
+    background: "#2b2620",
+    color: "#f7f3ec"
+  },
+  hubCard: {
+    background: "#fff",
+    border: "1px solid #e0d7c6",
+    borderRadius: 4,
+    padding: 16,
+    marginBottom: 16
+  },
+  hubHead: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 14
+  },
+  hubNom: {
+    border: "none",
+    borderBottom: "2px solid #2b2620",
+    background: "transparent",
+    fontSize: 18,
+    fontWeight: 700,
+    fontFamily: "Georgia, serif",
+    padding: "2px 0",
+    color: "#2b2620",
+    flex: 1
+  },
+  gridHead: {
+    display: "grid",
+    gridTemplateColumns: "1.6fr 1fr 1fr 1fr 0.9fr 0.4fr",
+    gap: 6,
+    fontSize: 10,
+    fontWeight: 700,
+    color: "#9a8f7e",
+    textTransform: "uppercase",
+    letterSpacing: "0.04em",
+    marginBottom: 6,
+    padding: "0 2px"
+  },
+  r: {
+    textAlign: "right"
+  },
+  gridRow: {
+    display: "grid",
+    gridTemplateColumns: "1.6fr 1fr 1fr 1fr 0.9fr 0.4fr",
+    gap: 6,
+    marginBottom: 6,
+    alignItems: "center"
+  },
+  cellNom: {
+    border: "1px solid #e0d7c6",
+    borderRadius: 3,
+    padding: "7px 8px",
+    fontSize: 13,
+    fontFamily: "inherit",
+    background: "#fcfaf5",
+    minWidth: 0
+  },
+  cell: {
+    border: "1px solid #e0d7c6",
+    borderRadius: 3,
+    padding: "7px 6px",
+    fontSize: 13,
+    textAlign: "right",
+    fontFamily: "inherit",
+    background: "#fcfaf5",
+    minWidth: 0,
+    fontVariantNumeric: "tabular-nums"
+  },
+  rowDel: {
+    border: "none",
+    background: "transparent",
+    color: "#c9bfa9",
+    cursor: "pointer",
+    fontSize: 13
+  },
+  addVille: {
+    width: "100%",
+    marginTop: 6,
+    padding: "8px",
+    background: "#f4efe6",
+    border: "1px dashed #d2c8b6",
+    borderRadius: 3,
+    fontSize: 12.5,
+    fontWeight: 600,
+    color: "#8a7f6e",
+    cursor: "pointer",
+    fontFamily: "inherit"
+  },
+  summary: {
+    marginTop: 14,
+    paddingTop: 14,
+    borderTop: "1px solid #ece5d8"
+  },
+  sumLine: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 8
+  },
+  sumLabel: {
+    fontSize: 12,
+    color: "#6b6155",
+    fontWeight: 600
+  },
+  sumVals: {
+    display: "flex",
+    gap: 12,
+    fontSize: 13,
+    fontVariantNumeric: "tabular-nums"
+  },
+  warn: {
+    marginTop: 10,
+    padding: "8px 12px",
+    background: "#fbeae8",
+    border: "1px solid #c0392b",
+    borderRadius: 3,
+    fontSize: 12,
+    color: "#9a3324"
+  },
+  bigResult: {
+    display: "flex",
+    alignItems: "center",
+    gap: 18,
+    marginTop: 14,
+    padding: "14px 16px",
+    background: "#f7f3ec",
+    borderRadius: 4,
+    border: "1px solid #e6ddca"
+  },
+  bigLabel: {
+    fontSize: 11,
+    color: "#9a8f7e",
+    fontWeight: 600,
+    marginBottom: 2
+  },
+  bigVal: {
+    fontFamily: "Georgia, serif",
+    fontSize: 28,
+    fontWeight: 700,
+    lineHeight: 1,
+    color: "#2b2620"
+  },
+  bigUnit: {
+    fontSize: 13,
+    color: "#9a8f7e",
+    fontWeight: 400
+  },
+  arrow: {
+    fontSize: 20,
+    color: "#c9bfa9"
+  },
+  limit: {
+    marginLeft: "auto",
+    fontSize: 11.5,
+    color: "#8a7f6e",
+    textAlign: "right",
+    lineHeight: 1.4
+  },
+  posed: {
+    marginTop: 10,
+    fontSize: 12.5,
+    color: "#6b6155"
+  }
 };
-
-
 function Calculateur() {
-  const [villes, setVilles] = React.useState([
-    { id: 1, nom: "Ville 1", mode: "bats", manual: { cereales: 0, bois: 0, eau: 0 }, bats: [
-      { id: 11, type: "champ", boost: 100 },
-      { id: 12, type: "champ", boost: 60 },
-      { id: 13, type: "scierie", boost: 80 },
-    ]},
-  ]);
+  const [villes, setVilles] = React.useState([{
+    id: 1,
+    nom: "Ville 1",
+    mode: "bats",
+    manual: {
+      cereales: 0,
+      bois: 0,
+      eau: 0
+    },
+    bats: [{
+      id: 11,
+      type: "champ",
+      boost: 100
+    }, {
+      id: 12,
+      type: "champ",
+      boost: 60
+    }, {
+      id: 13,
+      type: "scierie",
+      boost: 80
+    }]
+  }]);
   const [casernes, setCasernes] = React.useState(8);
   const [split, setSplit] = React.useState(100);
-
-  const addVille = () =>
-    setVilles((v) => [{ id: uid(), nom: `Ville ${v.length + 1}`, mode: "bats", bats: [],
-      manual: { cereales: 0, bois: 0, eau: 0 } }, ...v]);
-  const removeVille = (id) => setVilles((v) => v.filter((x) => x.id !== id));
-  const renameVille = (id, nom) =>
-    setVilles((v) => v.map((x) => (x.id === id ? { ...x, nom } : x)));
-  const setMode = (id, mode) =>
-    setVilles((v) => v.map((x) => (x.id === id ? { ...x, mode } : x)));
-  const setManual = (id, res, val) =>
-    setVilles((v) => v.map((x) =>
-      x.id === id ? { ...x, manual: { ...x.manual, [res]: Math.max(0, val) } } : x));
-  const addBat = (vid, type) =>
-    setVilles((v) => v.map((x) =>
-      x.id === vid ? { ...x, bats: [...x.bats, { id: uid(), type, boost: 100 }] } : x));
-  const removeBat = (vid, bid) =>
-    setVilles((v) => v.map((x) =>
-      x.id === vid ? { ...x, bats: x.bats.filter((b) => b.id !== bid) } : x));
-  const setBoost = (vid, bid, boost) =>
-    setVilles((v) => v.map((x) =>
-      x.id === vid ? { ...x, bats: x.bats.map((b) => (b.id === bid ? { ...b, boost } : b)) } : x));
+  const addVille = () => setVilles(v => [{
+    id: uid(),
+    nom: `Ville ${v.length + 1}`,
+    mode: "bats",
+    bats: [],
+    manual: {
+      cereales: 0,
+      bois: 0,
+      eau: 0
+    }
+  }, ...v]);
+  const removeVille = id => setVilles(v => v.filter(x => x.id !== id));
+  const renameVille = (id, nom) => setVilles(v => v.map(x => x.id === id ? {
+    ...x,
+    nom
+  } : x));
+  const setMode = (id, mode) => setVilles(v => v.map(x => x.id === id ? {
+    ...x,
+    mode
+  } : x));
+  const setManual = (id, res, val) => setVilles(v => v.map(x => x.id === id ? {
+    ...x,
+    manual: {
+      ...x.manual,
+      [res]: Math.max(0, val)
+    }
+  } : x));
+  const addBat = (vid, type) => setVilles(v => v.map(x => x.id === vid ? {
+    ...x,
+    bats: [...x.bats, {
+      id: uid(),
+      type,
+      boost: 100
+    }]
+  } : x));
+  const removeBat = (vid, bid) => setVilles(v => v.map(x => x.id === vid ? {
+    ...x,
+    bats: x.bats.filter(b => b.id !== bid)
+  } : x));
+  const setBoost = (vid, bid, boost) => setVilles(v => v.map(x => x.id === vid ? {
+    ...x,
+    bats: x.bats.map(b => b.id === bid ? {
+      ...b,
+      boost
+    } : b)
+  } : x));
 
   // Production d'une ville selon son mode de saisie
-  const prodVille = (ville) => {
+  const prodVille = ville => {
     if (ville.mode === "manuel") {
-      const m = ville.manual || { cereales: 0, bois: 0, eau: 0 };
-      return { cereales: +m.cereales || 0, bois: +m.bois || 0, eau: +m.eau || 0 };
+      const m = ville.manual || {
+        cereales: 0,
+        bois: 0,
+        eau: 0
+      };
+      return {
+        cereales: +m.cereales || 0,
+        bois: +m.bois || 0,
+        eau: +m.eau || 0
+      };
     }
-    const out = { cereales: 0, bois: 0, eau: 0 };
-    for (const b of ville.bats) { const t = TYPES[b.type]; out[t.res] += t.base * (1 + b.boost / 100); }
+    const out = {
+      cereales: 0,
+      bois: 0,
+      eau: 0
+    };
+    for (const b of ville.bats) {
+      const t = TYPES[b.type];
+      out[t.res] += t.base * (1 + b.boost / 100);
+    }
     return out;
   };
 
   // Production totale par ressource
   const prod = React.useMemo(() => {
-    const out = { cereales: 0, bois: 0, eau: 0 };
+    const out = {
+      cereales: 0,
+      bois: 0,
+      eau: 0
+    };
     for (const ville of villes) {
       const vp = prodVille(ville);
-      out.cereales += vp.cereales; out.bois += vp.bois; out.eau += vp.eau;
+      out.cereales += vp.cereales;
+      out.bois += vp.bois;
+      out.eau += vp.eau;
     }
-    return { cereales: Math.round(out.cereales), bois: Math.round(out.bois), eau: Math.round(out.eau) };
+    return {
+      cereales: Math.round(out.cereales),
+      bois: Math.round(out.bois),
+      eau: Math.round(out.eau)
+    };
   }, [villes]);
-
   const counts = React.useMemo(() => {
-    const c = { champ: 0, scierie: 0, usine: 0 };
+    const c = {
+      champ: 0,
+      scierie: 0,
+      usine: 0
+    };
     for (const ville of villes) if (ville.mode !== "manuel") for (const b of ville.bats) c[b.type]++;
     return c;
   }, [villes]);
-
-  const ks = Math.round((casernes * split) / 100);
+  const ks = Math.round(casernes * split / 100);
   const kd = casernes - ks;
   const conso = {
     cereales: ks * 60 * 10 + kd * 40 * 5,
     bois: ks * 60 * 5 + kd * 40 * 10,
-    eau: ks * 60 * 2 + kd * 40 * 10,
+    eau: ks * 60 * 2 + kd * 40 * 10
   };
   const solde = {
     cereales: prod.cereales - conso.cereales,
     bois: prod.bois - conso.bois,
-    eau: prod.eau - conso.eau,
+    eau: prod.eau - conso.eau
   };
   const manque = solde.cereales < 0 || solde.bois < 0 || solde.eau < 0;
-
   const maxOf = (per, rate) => {
-    const n = Math.min(
-      Math.floor(prod.cereales / per.c),
-      Math.floor(prod.bois / per.b),
-      Math.floor(prod.eau / per.e)
-    );
-    return { casernes: n, unites: n * rate };
+    const n = Math.min(Math.floor(prod.cereales / per.c), Math.floor(prod.bois / per.b), Math.floor(prod.eau / per.e));
+    return {
+      casernes: n,
+      unites: n * rate
+    };
   };
-  const maxSol = React.useMemo(() => maxOf({ c: 600, b: 300, e: 120 }, 60), [prod]);
-  const maxDef = React.useMemo(() => maxOf({ c: 200, b: 400, e: 400 }, 40), [prod]);
+  const maxSol = React.useMemo(() => maxOf({
+    c: 600,
+    b: 300,
+    e: 120
+  }, 60), [prod]);
+  const maxDef = React.useMemo(() => maxOf({
+    c: 200,
+    b: 400,
+    e: 400
+  }, 40), [prod]);
   // Quelle ressource limite chaque type ?
-  const limiter = (per) => {
-    const r = { Céréales: prod.cereales / per.c, Bois: prod.bois / per.b, Eau: prod.eau / per.e };
+  const limiter = per => {
+    const r = {
+      Céréales: prod.cereales / per.c,
+      Bois: prod.bois / per.b,
+      Eau: prod.eau / per.e
+    };
     return Object.entries(r).sort((a, b) => a[1] - b[1])[0][0];
   };
-
-  const fmt = (n) => Math.round(n).toLocaleString("fr-FR");
-
-  return (
-    <div style={S.page}>
-      <div style={S.frame}>
-        <header style={S.header}>
-          <div style={S.kicker}>GEOCRACY · LOGISTIQUE MILITAIRE</div>
-          <h1 style={S.title}>Calculateur de craft</h1>
-          <p style={S.sub}>
-            Chaque bâtiment a son propre boost topographique (0 % = base, 100 % = production doublée).
-            Compose tes villes bâtiment par bâtiment, l'outil calcule combien de soldats et défenseurs tu peux entretenir.
-          </p>
-        </header>
-
-        {/* VILLES */}
-        <section style={S.block}>
-          <div style={S.blockLabelRow}>
-            <span style={S.blockLabel}>1 — Tes villes et bâtiments</span>
-            <button style={S.addVilleBtn} onClick={addVille}>+ Ajouter une ville</button>
-          </div>
-
-          <div style={S.villesWrap}>
-            {villes.map((ville) => {
-              const vp = prodVille(ville);
-              const isManuel = ville.mode === "manuel";
-              return (
-                <div key={ville.id} style={S.villeCard}>
-                  <div style={S.villeHead}>
-                    <input style={S.villeNom} value={ville.nom}
-                      onChange={(e) => renameVille(ville.id, e.target.value)} />
-                    {!isManuel && <span style={S.villeSlots}>{ville.bats.length}/10 slots</span>}
-                    {villes.length > 1 && (
-                      <button style={S.villeDel} onClick={() => removeVille(ville.id)} title="Supprimer la ville">✕</button>
-                    )}
-                  </div>
-
-                  {/* Sélecteur de mode */}
-                  <div style={S.modeToggle}>
-                    <button style={{ ...S.modeBtn, ...(!isManuel ? S.modeBtnOn : {}) }}
-                      onClick={() => setMode(ville.id, "bats")}>Bâtiments + boost</button>
-                    <button style={{ ...S.modeBtn, ...(isManuel ? S.modeBtnOn : {}) }}
-                      onClick={() => setMode(ville.id, "manuel")}>Ressources /h</button>
-                  </div>
-
-                  {isManuel ? (
-                    /* MODE MANUEL : saisie directe des ressources/h */
-                    <div style={S.manualGrid}>
-                      {[["cereales", "Céréales", TYPES.champ.accent],
-                        ["bois", "Bois", TYPES.scierie.accent],
-                        ["eau", "Eau", TYPES.usine.accent]].map(([res, nom, accent]) => (
-                        <label key={res} style={S.manualField}>
-                          <span style={{ ...S.manualLabel, color: accent }}>{nom} /h</span>
-                          <input type="number" min="0" value={ville.manual[res]}
-                            onChange={(e) => setManual(ville.id, res, +e.target.value || 0)}
-                            style={S.manualInput} />
-                        </label>
-                      ))}
-                    </div>
-                  ) : (
-                    /* MODE BÂTIMENTS */
-                    <>
-                      {ville.bats.length === 0 && (
-                        <div style={S.empty}>Aucun bâtiment. Ajoute-en ci-dessous.</div>
-                      )}
-                      <div style={S.batList}>
-                        {ville.bats.map((b) => {
-                          const t = TYPES[b.type];
-                          const p = Math.round(t.base * (1 + b.boost / 100));
-                          return (
-                            <div key={b.id} style={S.batRow}>
-                              <span style={{ ...S.batTag, background: t.accent }}>{t.nom}</span>
-                              <input type="range" min="0" max="100" step="5" value={b.boost}
-                                onChange={(e) => setBoost(ville.id, b.id, +e.target.value)}
-                                style={{ ...S.batRange, accentColor: t.accent }} />
-                              <span style={{ ...S.batBoost, color: t.accent }}>{b.boost}%</span>
-                              <span style={S.batProd}>{p}/h</span>
-                              <button style={S.batDel} onClick={() => removeBat(ville.id, b.id)} title="Retirer">✕</button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <div style={S.addBatRow}>
-                        {Object.entries(TYPES).map(([key, t]) => (
-                          <button key={key} disabled={ville.bats.length >= 10}
-                            style={{ ...S.addBatBtn, borderColor: t.accent, color: t.accent,
-                                     opacity: ville.bats.length >= 10 ? 0.4 : 1 }}
-                            onClick={() => addBat(ville.id, key)}>+ {t.nom}</button>
-                        ))}
-                      </div>
-                    </>
-                  )}
-
-                  <div style={S.villeProd}>
-                    <span style={{ color: TYPES.champ.accent }}>{fmt(vp.cereales)} C</span>
-                    <span style={{ color: TYPES.scierie.accent }}>{fmt(vp.bois)} B</span>
-                    <span style={{ color: TYPES.usine.accent }}>{fmt(vp.eau)} E</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* PRODUCTION TOTALE */}
-        <section style={S.block}>
-          <div style={S.blockLabel}>2 — Production totale</div>
-          <div style={S.totalGrid}>
-            {[["cereales", "Céréales", counts.champ, "champs"],
-              ["bois", "Bois", counts.scierie, "scieries"],
-              ["eau", "Eau", counts.usine, "usines"]].map(([key, nom, n, lbl]) => {
-              const t = Object.values(TYPES).find((x) => x.res === key);
-              return (
-                <div key={key} style={{ ...S.totalCard, borderTopColor: t.accent }}>
-                  <div style={S.totalNom}>{nom}</div>
-                  <div style={{ ...S.totalVal, color: t.accent }}>{fmt(prod[key])}<span style={S.totalUnit}>/h</span></div>
-                  <div style={S.totalSub}>{n} {lbl}</div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* CAPACITÉ MAX */}
-        <section style={S.block}>
-          <div style={S.blockLabel}>3 — Capacité maximale</div>
-          <div style={S.maxGrid}>
-            <div style={{ ...S.maxCard, borderColor: COST.soldat.color }}>
-              <div style={{ ...S.maxLabel, color: COST.soldat.color }}>Tout en soldats</div>
-              <div style={S.maxBig}>{fmt(maxSol.unites)}<span style={S.maxUnit}> /h</span></div>
-              <div style={S.maxSub}>{maxSol.casernes} casernes · limité par : <strong>{limiter({ c: 600, b: 300, e: 120 })}</strong></div>
-            </div>
-            <div style={{ ...S.maxCard, borderColor: COST.defenseur.color }}>
-              <div style={{ ...S.maxLabel, color: COST.defenseur.color }}>Tout en défenseurs</div>
-              <div style={S.maxBig}>{fmt(maxDef.unites)}<span style={S.maxUnit}> /h</span></div>
-              <div style={S.maxSub}>{maxDef.casernes} casernes · limité par : <strong>{limiter({ c: 200, b: 400, e: 400 })}</strong></div>
-            </div>
-          </div>
-        </section>
-
-        {/* SIMULATEUR */}
-        <section style={S.block}>
-          <div style={S.blockLabel}>4 — Simuler un mix</div>
-          <div style={S.mixControls}>
-            <label style={S.field}>
-              <span style={S.fieldLabel}>Casernes actives</span>
-              <input type="number" min="0" value={casernes}
-                onChange={(e) => setCasernes(Math.max(0, +e.target.value || 0))}
-                style={S.numInput} />
-            </label>
-            <label style={S.field}>
-              <span style={S.fieldLabel}>
-                <strong style={{ color: COST.soldat.color }}>{ks} soldat</strong>
-                {" / "}
-                <strong style={{ color: COST.defenseur.color }}>{kd} défenseur</strong>
-              </span>
-              <input type="range" min="0" max="100" step="5" value={split}
-                onChange={(e) => setSplit(+e.target.value)} style={S.range} />
-            </label>
-          </div>
-
-          <div style={S.outRow}>
-            <div style={{ ...S.outUnit, borderColor: COST.soldat.color }}>
-              <div style={{ ...S.outUnitVal, color: COST.soldat.color }}>{fmt(ks * 60)}</div>
-              <div style={S.outUnitLab}>soldats / h</div>
-            </div>
-            <div style={{ ...S.outUnit, borderColor: COST.defenseur.color }}>
-              <div style={{ ...S.outUnitVal, color: COST.defenseur.color }}>{fmt(kd * 40)}</div>
-              <div style={S.outUnitLab}>défenseurs / h</div>
-            </div>
-          </div>
-
-          <table style={S.table}>
-            <thead>
-              <tr>
-                <th style={S.th}>Ressource</th>
-                <th style={S.thR}>Produite</th>
-                <th style={S.thR}>Consommée</th>
-                <th style={S.thR}>Solde</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[["cereales", "Céréales"], ["bois", "Bois"], ["eau", "Eau"]].map(([key, nom]) => (
-                <tr key={key}>
-                  <td style={S.td}>{nom}</td>
-                  <td style={S.tdR}>{fmt(prod[key])}</td>
-                  <td style={S.tdR}>{fmt(conso[key])}</td>
-                  <td style={{ ...S.tdR, fontWeight: 700, color: solde[key] < 0 ? "#c0392b" : "#3a7d3a" }}>
-                    {solde[key] >= 0 ? "+" : ""}{fmt(solde[key])}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div style={{ ...S.verdict, background: manque ? "#fbeae8" : "#eaf5ea",
-                        borderColor: manque ? "#c0392b" : "#3a7d3a" }}>
-            {manque
-              ? "⚠ Ressources insuffisantes — réduis les casernes ou rééquilibre le mix."
-              : "✓ Mix soutenable avec ta production actuelle."}
-          </div>
-        </section>
-
-        <footer style={S.footer}>
-          Base niveau max · Champ 168 · Scierie 126 · Usine 130 (doublée à 100 % de boost) · Soldat 10C/5B/2E · Défenseur 5C/10B/10E
-        </footer>
-      </div>
-    </div>
-  );
+  const fmt = n => Math.round(n).toLocaleString("fr-FR");
+  return /*#__PURE__*/React.createElement("div", {
+    style: S.page
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.frame
+  }, /*#__PURE__*/React.createElement("header", {
+    style: S.header
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.kicker
+  }, "GEOCRACY · LOGISTIQUE MILITAIRE"), /*#__PURE__*/React.createElement("h1", {
+    style: S.title
+  }, "Calculateur de craft"), /*#__PURE__*/React.createElement("p", {
+    style: S.sub
+  }, "Chaque bâtiment a son propre boost topographique (0 % = base, 100 % = production doublée). Compose tes villes bâtiment par bâtiment, l'outil calcule combien de soldats et défenseurs tu peux entretenir.")), /*#__PURE__*/React.createElement("section", {
+    style: S.block
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.blockLabelRow
+  }, /*#__PURE__*/React.createElement("span", {
+    style: S.blockLabel
+  }, "1 — Tes villes et bâtiments"), /*#__PURE__*/React.createElement("button", {
+    style: S.addVilleBtn,
+    onClick: addVille
+  }, "+ Ajouter une ville")), /*#__PURE__*/React.createElement("div", {
+    style: S.villesWrap
+  }, villes.map(ville => {
+    const vp = prodVille(ville);
+    const isManuel = ville.mode === "manuel";
+    return /*#__PURE__*/React.createElement("div", {
+      key: ville.id,
+      style: S.villeCard
+    }, /*#__PURE__*/React.createElement("div", {
+      style: S.villeHead
+    }, /*#__PURE__*/React.createElement("input", {
+      style: S.villeNom,
+      value: ville.nom,
+      onChange: e => renameVille(ville.id, e.target.value)
+    }), !isManuel && /*#__PURE__*/React.createElement("span", {
+      style: S.villeSlots
+    }, ville.bats.length, "/10 slots"), villes.length > 1 && /*#__PURE__*/React.createElement("button", {
+      style: S.villeDel,
+      onClick: () => removeVille(ville.id),
+      title: "Supprimer la ville"
+    }, "✕")), /*#__PURE__*/React.createElement("div", {
+      style: S.modeToggle
+    }, /*#__PURE__*/React.createElement("button", {
+      style: {
+        ...S.modeBtn,
+        ...(!isManuel ? S.modeBtnOn : {})
+      },
+      onClick: () => setMode(ville.id, "bats")
+    }, "Bâtiments + boost"), /*#__PURE__*/React.createElement("button", {
+      style: {
+        ...S.modeBtn,
+        ...(isManuel ? S.modeBtnOn : {})
+      },
+      onClick: () => setMode(ville.id, "manuel")
+    }, "Ressources /h")), isManuel ?
+    /*#__PURE__*/
+    /* MODE MANUEL : saisie directe des ressources/h */
+    React.createElement("div", {
+      style: S.manualGrid
+    }, [["cereales", "Céréales", TYPES.champ.accent], ["bois", "Bois", TYPES.scierie.accent], ["eau", "Eau", TYPES.usine.accent]].map(([res, nom, accent]) => /*#__PURE__*/React.createElement("label", {
+      key: res,
+      style: S.manualField
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...S.manualLabel,
+        color: accent
+      }
+    }, nom, " /h"), /*#__PURE__*/React.createElement("input", {
+      type: "number",
+      min: "0",
+      value: ville.manual[res],
+      onChange: e => setManual(ville.id, res, +e.target.value || 0),
+      style: S.manualInput
+    })))) :
+    /*#__PURE__*/
+    /* MODE BÂTIMENTS */
+    React.createElement(React.Fragment, null, ville.bats.length === 0 && /*#__PURE__*/React.createElement("div", {
+      style: S.empty
+    }, "Aucun bâtiment. Ajoute-en ci-dessous."), /*#__PURE__*/React.createElement("div", {
+      style: S.batList
+    }, ville.bats.map(b => {
+      const t = TYPES[b.type];
+      const p = Math.round(t.base * (1 + b.boost / 100));
+      return /*#__PURE__*/React.createElement("div", {
+        key: b.id,
+        style: S.batRow
+      }, /*#__PURE__*/React.createElement("span", {
+        style: {
+          ...S.batTag,
+          background: t.accent
+        }
+      }, t.nom), /*#__PURE__*/React.createElement("input", {
+        type: "range",
+        min: "0",
+        max: "100",
+        step: "5",
+        value: b.boost,
+        onChange: e => setBoost(ville.id, b.id, +e.target.value),
+        style: {
+          ...S.batRange,
+          accentColor: t.accent
+        }
+      }), /*#__PURE__*/React.createElement("span", {
+        style: {
+          ...S.batBoost,
+          color: t.accent
+        }
+      }, b.boost, "%"), /*#__PURE__*/React.createElement("span", {
+        style: S.batProd
+      }, p, "/h"), /*#__PURE__*/React.createElement("button", {
+        style: S.batDel,
+        onClick: () => removeBat(ville.id, b.id),
+        title: "Retirer"
+      }, "✕"));
+    })), /*#__PURE__*/React.createElement("div", {
+      style: S.addBatRow
+    }, Object.entries(TYPES).map(([key, t]) => /*#__PURE__*/React.createElement("button", {
+      key: key,
+      disabled: ville.bats.length >= 10,
+      style: {
+        ...S.addBatBtn,
+        borderColor: t.accent,
+        color: t.accent,
+        opacity: ville.bats.length >= 10 ? 0.4 : 1
+      },
+      onClick: () => addBat(ville.id, key)
+    }, "+ ", t.nom)))), /*#__PURE__*/React.createElement("div", {
+      style: S.villeProd
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: TYPES.champ.accent
+      }
+    }, fmt(vp.cereales), " C"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: TYPES.scierie.accent
+      }
+    }, fmt(vp.bois), " B"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: TYPES.usine.accent
+      }
+    }, fmt(vp.eau), " E")));
+  }))), /*#__PURE__*/React.createElement("section", {
+    style: S.block
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.blockLabel
+  }, "2 — Production totale"), /*#__PURE__*/React.createElement("div", {
+    style: S.totalGrid
+  }, [["cereales", "Céréales", counts.champ, "champs"], ["bois", "Bois", counts.scierie, "scieries"], ["eau", "Eau", counts.usine, "usines"]].map(([key, nom, n, lbl]) => {
+    const t = Object.values(TYPES).find(x => x.res === key);
+    return /*#__PURE__*/React.createElement("div", {
+      key: key,
+      style: {
+        ...S.totalCard,
+        borderTopColor: t.accent
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: S.totalNom
+    }, nom), /*#__PURE__*/React.createElement("div", {
+      style: {
+        ...S.totalVal,
+        color: t.accent
+      }
+    }, fmt(prod[key]), /*#__PURE__*/React.createElement("span", {
+      style: S.totalUnit
+    }, "/h")), /*#__PURE__*/React.createElement("div", {
+      style: S.totalSub
+    }, n, " ", lbl));
+  }))), /*#__PURE__*/React.createElement("section", {
+    style: S.block
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.blockLabel
+  }, "3 — Capacité maximale"), /*#__PURE__*/React.createElement("div", {
+    style: S.maxGrid
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.maxCard,
+      borderColor: COST.soldat.color
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.maxLabel,
+      color: COST.soldat.color
+    }
+  }, "Tout en soldats"), /*#__PURE__*/React.createElement("div", {
+    style: S.maxBig
+  }, fmt(maxSol.unites), /*#__PURE__*/React.createElement("span", {
+    style: S.maxUnit
+  }, " /h")), /*#__PURE__*/React.createElement("div", {
+    style: S.maxSub
+  }, maxSol.casernes, " casernes · limité par : ", /*#__PURE__*/React.createElement("strong", null, limiter({
+    c: 600,
+    b: 300,
+    e: 120
+  })))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.maxCard,
+      borderColor: COST.defenseur.color
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.maxLabel,
+      color: COST.defenseur.color
+    }
+  }, "Tout en défenseurs"), /*#__PURE__*/React.createElement("div", {
+    style: S.maxBig
+  }, fmt(maxDef.unites), /*#__PURE__*/React.createElement("span", {
+    style: S.maxUnit
+  }, " /h")), /*#__PURE__*/React.createElement("div", {
+    style: S.maxSub
+  }, maxDef.casernes, " casernes · limité par : ", /*#__PURE__*/React.createElement("strong", null, limiter({
+    c: 200,
+    b: 400,
+    e: 400
+  })))))), /*#__PURE__*/React.createElement("section", {
+    style: S.block
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.blockLabel
+  }, "4 — Simuler un mix"), /*#__PURE__*/React.createElement("div", {
+    style: S.mixControls
+  }, /*#__PURE__*/React.createElement("label", {
+    style: S.field
+  }, /*#__PURE__*/React.createElement("span", {
+    style: S.fieldLabel
+  }, "Casernes actives"), /*#__PURE__*/React.createElement("input", {
+    type: "number",
+    min: "0",
+    value: casernes,
+    onChange: e => setCasernes(Math.max(0, +e.target.value || 0)),
+    style: S.numInput
+  })), /*#__PURE__*/React.createElement("label", {
+    style: S.field
+  }, /*#__PURE__*/React.createElement("span", {
+    style: S.fieldLabel
+  }, /*#__PURE__*/React.createElement("strong", {
+    style: {
+      color: COST.soldat.color
+    }
+  }, ks, " soldat"), " / ", /*#__PURE__*/React.createElement("strong", {
+    style: {
+      color: COST.defenseur.color
+    }
+  }, kd, " défenseur")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "100",
+    step: "5",
+    value: split,
+    onChange: e => setSplit(+e.target.value),
+    style: S.range
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: S.outRow
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.outUnit,
+      borderColor: COST.soldat.color
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.outUnitVal,
+      color: COST.soldat.color
+    }
+  }, fmt(ks * 60)), /*#__PURE__*/React.createElement("div", {
+    style: S.outUnitLab
+  }, "soldats / h")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.outUnit,
+      borderColor: COST.defenseur.color
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.outUnitVal,
+      color: COST.defenseur.color
+    }
+  }, fmt(kd * 40)), /*#__PURE__*/React.createElement("div", {
+    style: S.outUnitLab
+  }, "défenseurs / h"))), /*#__PURE__*/React.createElement("table", {
+    style: S.table
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", {
+    style: S.th
+  }, "Ressource"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "Produite"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "Consommée"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "Solde"))), /*#__PURE__*/React.createElement("tbody", null, [["cereales", "Céréales"], ["bois", "Bois"], ["eau", "Eau"]].map(([key, nom]) => /*#__PURE__*/React.createElement("tr", {
+    key: key
+  }, /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, nom), /*#__PURE__*/React.createElement("td", {
+    style: S.tdR
+  }, fmt(prod[key])), /*#__PURE__*/React.createElement("td", {
+    style: S.tdR
+  }, fmt(conso[key])), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.tdR,
+      fontWeight: 700,
+      color: solde[key] < 0 ? "#c0392b" : "#3a7d3a"
+    }
+  }, solde[key] >= 0 ? "+" : "", fmt(solde[key])))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.verdict,
+      background: manque ? "#fbeae8" : "#eaf5ea",
+      borderColor: manque ? "#c0392b" : "#3a7d3a"
+    }
+  }, manque ? "⚠ Ressources insuffisantes — réduis les casernes ou rééquilibre le mix." : "✓ Mix soutenable avec ta production actuelle.")), /*#__PURE__*/React.createElement("footer", {
+    style: S.footer
+  }, "Base niveau max · Champ 168 · Scierie 126 · Usine 130 (doublée à 100 % de boost) · Soldat 10C/5B/2E · Défenseur 5C/10B/10E")));
 }
 
 // ===== Onglet Plan optimisé (topographie eau 0%, bois & céréales 100%, 8 casernes soldats) =====
 function PlanOptimise() {
   // Production réelle selon topo : champ 336, scierie 252, usine 130 (eau 0%)
-  const P = { ch: 336, sc: 252, us: 130 };
-  const villes = [
-    { nom: "HUB militaire", role: "Craft soldats", ch: 0, sc: 0, us: 0, cas: 8, eo: 2, hub: true },
-    { nom: "Satellite 1", role: "Céréales + Bois", ch: 5, sc: 3, us: 0, cas: 0, eo: 2 },
-    { nom: "Satellite 2", role: "Céréales + Eau", ch: 5, sc: 0, us: 3, cas: 0, eo: 2 },
-    { nom: "Satellite 3", role: "Bois + Eau", ch: 0, sc: 7, us: 2, cas: 0, eo: 1 },
-    { nom: "Satellite 4", role: "Céréales + Eau", ch: 5, sc: 0, us: 3, cas: 0, eo: 2 },
-  ];
-  const prodV = (v) => ({ c: v.ch * P.ch, b: v.sc * P.sc, e: v.us * P.us });
+  const P = {
+    ch: 336,
+    sc: 252,
+    us: 130
+  };
+  const villes = [{
+    nom: "HUB militaire",
+    role: "Craft soldats",
+    ch: 0,
+    sc: 0,
+    us: 0,
+    cas: 8,
+    eo: 2,
+    hub: true
+  }, {
+    nom: "Satellite 1",
+    role: "Céréales + Bois",
+    ch: 5,
+    sc: 3,
+    us: 0,
+    cas: 0,
+    eo: 2
+  }, {
+    nom: "Satellite 2",
+    role: "Céréales + Eau",
+    ch: 5,
+    sc: 0,
+    us: 3,
+    cas: 0,
+    eo: 2
+  }, {
+    nom: "Satellite 3",
+    role: "Bois + Eau",
+    ch: 0,
+    sc: 7,
+    us: 2,
+    cas: 0,
+    eo: 1
+  }, {
+    nom: "Satellite 4",
+    role: "Céréales + Eau",
+    ch: 5,
+    sc: 0,
+    us: 3,
+    cas: 0,
+    eo: 2
+  }];
+  const prodV = v => ({
+    c: v.ch * P.ch,
+    b: v.sc * P.sc,
+    e: v.us * P.us
+  });
   const tot = villes.reduce((a, v) => {
     const p = prodV(v);
-    return { c: a.c + p.c, b: a.b + p.b, e: a.e + p.e, cas: a.cas + v.cas };
-  }, { c: 0, b: 0, e: 0, cas: 0 });
-  const conso = { c: tot.cas * 600, b: tot.cas * 300, e: tot.cas * 120 };
-  const fmt = (n) => Math.round(n).toLocaleString("fr-FR");
-
-  return (
-    <div style={S.page}>
-      <div style={S.frame}>
-        <header style={S.header}>
-          <div style={S.kicker}>GEOCRACY · PLAN OPTIMISÉ</div>
-          <h1 style={S.title}>5 villes · {tot.cas * 60} soldats / h</h1>
-          <p style={S.sub}>
-            Plan calculé pour ta topographie : céréales et bois à 100 %, eau à 0 %.
-            Un hub militaire de {tot.cas} casernes soldats, alimenté par 4 satellites de production spécialisés
-            (1 à 2 ressources chacun, jamais 3). Chaque ville autonome en énergie.
-          </p>
-        </header>
-
-        <section style={S.block}>
-          <div style={S.blockLabel}>Attribution des villes</div>
-          <div style={P0.cards}>
-            {villes.map((v, i) => {
-              const p = prodV(v);
-              const slots = v.ch + v.sc + v.us + v.cas + v.eo;
-              return (
-                <div key={i} style={{ ...P0.card, borderLeft: `4px solid ${v.hub ? "#b5402f" : "#6b8c4a"}` }}>
-                  <div style={P0.cardHead}>
-                    <span style={P0.cardNom}>{v.hub ? "🏰 " : "⚙ "}{v.nom}</span>
-                    <span style={{ ...P0.cardRole, color: v.hub ? "#b5402f" : "#6b8c4a" }}>{v.role}</span>
-                  </div>
-                  <div style={P0.compRow}>
-                    {v.ch > 0 && <span style={{ ...P0.chip, background: "#c98a3a" }}>{v.ch} champs</span>}
-                    {v.sc > 0 && <span style={{ ...P0.chip, background: "#6b8c4a" }}>{v.sc} scieries</span>}
-                    {v.us > 0 && <span style={{ ...P0.chip, background: "#3a7d8c" }}>{v.us} usines</span>}
-                    {v.cas > 0 && <span style={{ ...P0.chip, background: "#b5402f" }}>{v.cas} casernes</span>}
-                    {v.eo > 0 && <span style={{ ...P0.chip, background: "#9a7b3f" }}>{v.eo} éoliennes</span>}
-                  </div>
-                  <div style={P0.cardFoot}>
-                    <span style={P0.slot}>{slots}/10 slots</span>
-                    {v.hub
-                      ? <span style={P0.craft}>→ {v.cas * 60} soldats / h</span>
-                      : <span style={P0.res}>
-                          {p.c > 0 && <b style={{ color: "#c98a3a" }}>{fmt(p.c)} C </b>}
-                          {p.b > 0 && <b style={{ color: "#6b8c4a" }}>{fmt(p.b)} B </b>}
-                          {p.e > 0 && <b style={{ color: "#3a7d8c" }}>{fmt(p.e)} E</b>}
-                        </span>}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        <section style={S.block}>
-          <div style={S.blockLabel}>Bilan ressources</div>
-          <table style={S.table}>
-            <thead>
-              <tr><th style={S.th}>Ressource</th><th style={S.thR}>Produite</th>
-                <th style={S.thR}>Consommée</th><th style={S.thR}>Solde</th></tr>
-            </thead>
-            <tbody>
-              {[["Céréales", tot.c, conso.c], ["Bois", tot.b, conso.b], ["Eau", tot.e, conso.e]].map(([nom, pr, co]) => (
-                <tr key={nom}>
-                  <td style={S.td}>{nom}</td>
-                  <td style={S.tdR}>{fmt(pr)}</td>
-                  <td style={S.tdR}>{fmt(co)}</td>
-                  <td style={{ ...S.tdR, fontWeight: 700, color: pr - co >= 0 ? "#3a7d3a" : "#c0392b" }}>
-                    +{fmt(pr - co)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div style={P0.note}>
-            Chaque ville est spécialisée sur 1 ou 2 ressources au maximum, jamais 3 — logistique simple, un satellite
-            ne livre qu'un ou deux flux. L'eau à 0 % de boost (130/usine) reste le poste tendu : il faut 8 usines
-            réparties sur 3 satellites pour couvrir tout juste le besoin. Les soldats ne réclamant que 120 eau chacun,
-            le plan tient à 8 casernes — le maximum avant que l'eau ne bloque.
-          </div>
-        </section>
-
-        <footer style={S.footer}>
-          Topographie : céréales 100 % · bois 100 % · eau 0 % · casernes Lv4 · 1 caserne = 60 soldats/h (600 C / 300 B / 120 E)
-        </footer>
-      </div>
-    </div>
-  );
+    return {
+      c: a.c + p.c,
+      b: a.b + p.b,
+      e: a.e + p.e,
+      cas: a.cas + v.cas
+    };
+  }, {
+    c: 0,
+    b: 0,
+    e: 0,
+    cas: 0
+  });
+  const conso = {
+    c: tot.cas * 600,
+    b: tot.cas * 300,
+    e: tot.cas * 120
+  };
+  const fmt = n => Math.round(n).toLocaleString("fr-FR");
+  return /*#__PURE__*/React.createElement("div", {
+    style: S.page
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.frame
+  }, /*#__PURE__*/React.createElement("header", {
+    style: S.header
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.kicker
+  }, "GEOCRACY · PLAN OPTIMISÉ"), /*#__PURE__*/React.createElement("h1", {
+    style: S.title
+  }, "5 villes · ", tot.cas * 60, " soldats / h"), /*#__PURE__*/React.createElement("p", {
+    style: S.sub
+  }, "Plan calculé pour ta topographie : céréales et bois à 100 %, eau à 0 %. Un hub militaire de ", tot.cas, " casernes soldats, alimenté par 4 satellites de production spécialisés (1 à 2 ressources chacun, jamais 3). Chaque ville autonome en énergie.")), /*#__PURE__*/React.createElement("section", {
+    style: S.block
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.blockLabel
+  }, "Attribution des villes"), /*#__PURE__*/React.createElement("div", {
+    style: P0.cards
+  }, villes.map((v, i) => {
+    const p = prodV(v);
+    const slots = v.ch + v.sc + v.us + v.cas + v.eo;
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        ...P0.card,
+        borderLeft: `4px solid ${v.hub ? "#b5402f" : "#6b8c4a"}`
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: P0.cardHead
+    }, /*#__PURE__*/React.createElement("span", {
+      style: P0.cardNom
+    }, v.hub ? "🏰 " : "⚙ ", v.nom), /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...P0.cardRole,
+        color: v.hub ? "#b5402f" : "#6b8c4a"
+      }
+    }, v.role)), /*#__PURE__*/React.createElement("div", {
+      style: P0.compRow
+    }, v.ch > 0 && /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...P0.chip,
+        background: "#c98a3a"
+      }
+    }, v.ch, " champs"), v.sc > 0 && /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...P0.chip,
+        background: "#6b8c4a"
+      }
+    }, v.sc, " scieries"), v.us > 0 && /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...P0.chip,
+        background: "#3a7d8c"
+      }
+    }, v.us, " usines"), v.cas > 0 && /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...P0.chip,
+        background: "#b5402f"
+      }
+    }, v.cas, " casernes"), v.eo > 0 && /*#__PURE__*/React.createElement("span", {
+      style: {
+        ...P0.chip,
+        background: "#9a7b3f"
+      }
+    }, v.eo, " éoliennes")), /*#__PURE__*/React.createElement("div", {
+      style: P0.cardFoot
+    }, /*#__PURE__*/React.createElement("span", {
+      style: P0.slot
+    }, slots, "/10 slots"), v.hub ? /*#__PURE__*/React.createElement("span", {
+      style: P0.craft
+    }, "→ ", v.cas * 60, " soldats / h") : /*#__PURE__*/React.createElement("span", {
+      style: P0.res
+    }, p.c > 0 && /*#__PURE__*/React.createElement("b", {
+      style: {
+        color: "#c98a3a"
+      }
+    }, fmt(p.c), " C "), p.b > 0 && /*#__PURE__*/React.createElement("b", {
+      style: {
+        color: "#6b8c4a"
+      }
+    }, fmt(p.b), " B "), p.e > 0 && /*#__PURE__*/React.createElement("b", {
+      style: {
+        color: "#3a7d8c"
+      }
+    }, fmt(p.e), " E"))));
+  }))), /*#__PURE__*/React.createElement("section", {
+    style: S.block
+  }, /*#__PURE__*/React.createElement("div", {
+    style: S.blockLabel
+  }, "Bilan ressources"), /*#__PURE__*/React.createElement("table", {
+    style: S.table
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", {
+    style: S.th
+  }, "Ressource"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "Produite"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "Consommée"), /*#__PURE__*/React.createElement("th", {
+    style: S.thR
+  }, "Solde"))), /*#__PURE__*/React.createElement("tbody", null, [["Céréales", tot.c, conso.c], ["Bois", tot.b, conso.b], ["Eau", tot.e, conso.e]].map(([nom, pr, co]) => /*#__PURE__*/React.createElement("tr", {
+    key: nom
+  }, /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, nom), /*#__PURE__*/React.createElement("td", {
+    style: S.tdR
+  }, fmt(pr)), /*#__PURE__*/React.createElement("td", {
+    style: S.tdR
+  }, fmt(co)), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.tdR,
+      fontWeight: 700,
+      color: pr - co >= 0 ? "#3a7d3a" : "#c0392b"
+    }
+  }, "+", fmt(pr - co)))))), /*#__PURE__*/React.createElement("div", {
+    style: P0.note
+  }, "Chaque ville est spécialisée sur 1 ou 2 ressources au maximum, jamais 3 — logistique simple, un satellite ne livre qu'un ou deux flux. L'eau à 0 % de boost (130/usine) reste le poste tendu : il faut 8 usines réparties sur 3 satellites pour couvrir tout juste le besoin. Les soldats ne réclamant que 120 eau chacun, le plan tient à 8 casernes — le maximum avant que l'eau ne bloque.")), /*#__PURE__*/React.createElement("footer", {
+    style: S.footer
+  }, "Topographie : céréales 100 % · bois 100 % · eau 0 % · casernes Lv4 · 1 caserne = 60 soldats/h (600 C / 300 B / 120 E)")));
 }
-
 const P0 = {
-  cards: { display: "flex", flexDirection: "column", gap: 10 },
-  card: { background: "#fff", border: "1px solid #e0d7c6", borderRadius: 3, padding: "14px 16px" },
-  cardHead: { display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 },
-  cardNom: { fontWeight: 700, fontSize: 15, fontFamily: "Georgia, serif" },
-  cardRole: { fontSize: 11.5, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase" },
-  compRow: { display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 },
-  chip: { color: "#fff", fontSize: 11.5, fontWeight: 600, padding: "3px 9px", borderRadius: 3 },
-  cardFoot: { display: "flex", justifyContent: "space-between", alignItems: "center",
-    borderTop: "1px solid #f0eadd", paddingTop: 9 },
-  slot: { fontSize: 11.5, color: "#a89e8a" },
-  craft: { fontSize: 14, fontWeight: 700, color: "#b5402f", fontFamily: "Georgia, serif" },
-  res: { fontSize: 13, fontVariantNumeric: "tabular-nums" },
-  note: { fontSize: 12.5, lineHeight: 1.55, color: "#8a7f6e", marginTop: 16 },
+  cards: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 10
+  },
+  card: {
+    background: "#fff",
+    border: "1px solid #e0d7c6",
+    borderRadius: 3,
+    padding: "14px 16px"
+  },
+  cardHead: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    marginBottom: 10
+  },
+  cardNom: {
+    fontWeight: 700,
+    fontSize: 15,
+    fontFamily: "Georgia, serif"
+  },
+  cardRole: {
+    fontSize: 11.5,
+    fontWeight: 700,
+    letterSpacing: "0.04em",
+    textTransform: "uppercase"
+  },
+  compRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 6,
+    marginBottom: 10
+  },
+  chip: {
+    color: "#fff",
+    fontSize: 11.5,
+    fontWeight: 600,
+    padding: "3px 9px",
+    borderRadius: 3
+  },
+  cardFoot: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderTop: "1px solid #f0eadd",
+    paddingTop: 9
+  },
+  slot: {
+    fontSize: 11.5,
+    color: "#a89e8a"
+  },
+  craft: {
+    fontSize: 14,
+    fontWeight: 700,
+    color: "#b5402f",
+    fontFamily: "Georgia, serif"
+  },
+  res: {
+    fontSize: 13,
+    fontVariantNumeric: "tabular-nums"
+  },
+  note: {
+    fontSize: 12.5,
+    lineHeight: 1.55,
+    color: "#8a7f6e",
+    marginTop: 16
+  }
 };
-
 const S = {
-  page: { padding: "8px 16px 28px",
-    fontFamily: "'Inter', system-ui, sans-serif", color: "#2b2620" },
-  frame: { maxWidth: 880, margin: "0 auto", background: "#f7f3ec",
-    border: "1px solid #d8cfbe", borderRadius: 4,
-    boxShadow: "0 1px 0 #fff inset, 0 12px 40px -20px rgba(60,45,25,.4)" },
-  header: { padding: "32px 32px 24px", borderBottom: "2px solid #2b2620" },
-  kicker: { fontSize: 11, letterSpacing: "0.22em", fontWeight: 700, color: "#9a7b3f", marginBottom: 10 },
-  title: { fontFamily: "Georgia, serif", fontSize: 34, fontWeight: 700, margin: "0 0 8px" },
-  sub: { fontSize: 13.5, lineHeight: 1.55, color: "#6b6155", margin: 0, maxWidth: 640 },
-  block: { padding: "24px 32px", borderBottom: "1px solid #e3dac8" },
-  blockLabelRow: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 },
-  blockLabel: { fontSize: 11, letterSpacing: "0.14em", fontWeight: 700, color: "#9a7b3f", textTransform: "uppercase" },
-  addVilleBtn: { background: "#2b2620", color: "#f7f3ec", border: "none", borderRadius: 3,
-    padding: "8px 14px", fontSize: 12.5, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" },
-  villesWrap: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(330px, 1fr))", gap: 16 },
-  villeCard: { background: "#fff", border: "1px solid #e0d7c6", borderRadius: 3, padding: 16 },
-  villeHead: { display: "flex", alignItems: "center", gap: 10, marginBottom: 12 },
-  villeNom: { flex: 1, border: "none", borderBottom: "1.5px solid #ddd3c0", background: "transparent",
-    fontSize: 15.5, fontWeight: 700, fontFamily: "Georgia, serif", padding: "2px 0", color: "#2b2620" },
-  villeSlots: { fontSize: 11, color: "#a89e8a", whiteSpace: "nowrap" },
-  villeDel: { border: "none", background: "transparent", color: "#c0392b", cursor: "pointer", fontSize: 14, padding: 2 },
-  modeToggle: { display: "flex", gap: 4, marginBottom: 14, background: "#f0eadd", padding: 3,
-    borderRadius: 4, border: "1px solid #e6ddca" },
-  modeBtn: { flex: 1, border: "none", background: "transparent", padding: "6px 8px", fontSize: 11.5,
-    fontWeight: 600, color: "#9a8f7e", cursor: "pointer", borderRadius: 3, fontFamily: "inherit" },
-  modeBtnOn: { background: "#2b2620", color: "#f7f3ec" },
-  manualGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, marginBottom: 12 },
-  manualField: { display: "block" },
-  manualLabel: { display: "block", fontSize: 11, fontWeight: 700, marginBottom: 4 },
-  manualInput: { width: "100%", boxSizing: "border-box", padding: "8px 8px", fontSize: 14,
-    fontWeight: 600, border: "1px solid #d2c8b6", borderRadius: 3, background: "#fcfaf5",
-    fontFamily: "inherit", color: "#2b2620" },
-  empty: { fontSize: 12.5, color: "#b0a690", fontStyle: "italic", padding: "8px 0" },
-  batList: { display: "flex", flexDirection: "column", gap: 7, marginBottom: 12 },
-  batRow: { display: "flex", alignItems: "center", gap: 8 },
-  batTag: { color: "#fff", fontSize: 11, fontWeight: 600, padding: "3px 7px", borderRadius: 3,
-    width: 58, textAlign: "center", flexShrink: 0 },
-  batRange: { flex: 1, minWidth: 60 },
-  batBoost: { fontSize: 12, fontWeight: 700, width: 38, textAlign: "right", flexShrink: 0 },
-  batProd: { fontSize: 11.5, color: "#8a7f6e", width: 46, textAlign: "right", flexShrink: 0,
-    fontVariantNumeric: "tabular-nums" },
-  batDel: { border: "none", background: "transparent", color: "#c9bfa9", cursor: "pointer", fontSize: 12, flexShrink: 0 },
-  addBatRow: { display: "flex", gap: 6, marginBottom: 12 },
-  addBatBtn: { flex: 1, background: "#fff", border: "1px solid", borderRadius: 3, padding: "6px 4px",
-    fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" },
-  villeProd: { display: "flex", gap: 14, justifyContent: "flex-end", fontSize: 12.5, fontWeight: 700,
-    borderTop: "1px solid #f0eadd", paddingTop: 10, fontVariantNumeric: "tabular-nums" },
-  totalGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 },
-  totalCard: { background: "#fff", border: "1px solid #e0d7c6", borderTop: "3px solid", borderRadius: 3, padding: "14px 16px" },
-  totalNom: { fontSize: 12, color: "#6b6155", marginBottom: 6 },
-  totalVal: { fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 700, lineHeight: 1 },
-  totalUnit: { fontSize: 13, color: "#9a8f7e", fontWeight: 400 },
-  totalSub: { fontSize: 11.5, color: "#a89e8a", marginTop: 5 },
-  maxGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 },
-  maxCard: { background: "#fff", border: "1.5px solid", borderRadius: 3, padding: "18px 20px" },
-  maxLabel: { fontSize: 12, fontWeight: 700, marginBottom: 8 },
-  maxBig: { fontFamily: "Georgia, serif", fontSize: 36, fontWeight: 700, lineHeight: 1 },
-  maxUnit: { fontSize: 14, color: "#9a8f7e", fontWeight: 400 },
-  maxSub: { fontSize: 12, color: "#6b6155", marginTop: 7 },
-  mixControls: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 20 },
-  field: { display: "block" },
-  numInput: { width: "100%", boxSizing: "border-box", padding: "9px 12px", fontSize: 17,
-    fontWeight: 700, fontFamily: "Georgia, serif", border: "1px solid #d2c8b6", borderRadius: 3,
-    background: "#fcfaf5", color: "#2b2620" },
-  fieldLabel: { display: "block", fontSize: 12.5, color: "#6b6155", marginBottom: 8 },
-  range: { width: "100%" },
-  outRow: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 22 },
-  outUnit: { border: "1.5px solid", borderRadius: 3, padding: "16px 20px", textAlign: "center" },
-  outUnitVal: { fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 700, lineHeight: 1 },
-  outUnitLab: { fontSize: 12, color: "#6b6155", marginTop: 4 },
-  table: { width: "100%", borderCollapse: "collapse", fontSize: 13.5 },
-  th: { textAlign: "left", padding: "8px 10px", borderBottom: "2px solid #2b2620", fontSize: 11,
-    letterSpacing: "0.08em", textTransform: "uppercase", color: "#6b6155" },
-  thR: { textAlign: "right", padding: "8px 10px", borderBottom: "2px solid #2b2620", fontSize: 11,
-    letterSpacing: "0.08em", textTransform: "uppercase", color: "#6b6155" },
-  td: { padding: "9px 10px", borderBottom: "1px solid #ece5d8" },
-  tdR: { padding: "9px 10px", borderBottom: "1px solid #ece5d8", textAlign: "right", fontVariantNumeric: "tabular-nums" },
-  verdict: { marginTop: 16, padding: "12px 16px", border: "1px solid", borderRadius: 3, fontSize: 13, fontWeight: 500 },
-  footer: { padding: "16px 32px", fontSize: 11, color: "#a89e8a", textAlign: "center", lineHeight: 1.5 },
+  page: {
+    padding: "8px 16px 28px",
+    fontFamily: "'Inter', system-ui, sans-serif",
+    color: "#2b2620"
+  },
+  frame: {
+    maxWidth: 880,
+    margin: "0 auto",
+    background: "#f7f3ec",
+    border: "1px solid #d8cfbe",
+    borderRadius: 4,
+    boxShadow: "0 1px 0 #fff inset, 0 12px 40px -20px rgba(60,45,25,.4)"
+  },
+  header: {
+    padding: "32px 32px 24px",
+    borderBottom: "2px solid #2b2620"
+  },
+  kicker: {
+    fontSize: 11,
+    letterSpacing: "0.22em",
+    fontWeight: 700,
+    color: "#9a7b3f",
+    marginBottom: 10
+  },
+  title: {
+    fontFamily: "Georgia, serif",
+    fontSize: 34,
+    fontWeight: 700,
+    margin: "0 0 8px"
+  },
+  sub: {
+    fontSize: 13.5,
+    lineHeight: 1.55,
+    color: "#6b6155",
+    margin: 0,
+    maxWidth: 640
+  },
+  block: {
+    padding: "24px 32px",
+    borderBottom: "1px solid #e3dac8"
+  },
+  blockLabelRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 18
+  },
+  blockLabel: {
+    fontSize: 11,
+    letterSpacing: "0.14em",
+    fontWeight: 700,
+    color: "#9a7b3f",
+    textTransform: "uppercase"
+  },
+  addVilleBtn: {
+    background: "#2b2620",
+    color: "#f7f3ec",
+    border: "none",
+    borderRadius: 3,
+    padding: "8px 14px",
+    fontSize: 12.5,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontFamily: "inherit"
+  },
+  villesWrap: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(330px, 1fr))",
+    gap: 16
+  },
+  villeCard: {
+    background: "#fff",
+    border: "1px solid #e0d7c6",
+    borderRadius: 3,
+    padding: 16
+  },
+  villeHead: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 12
+  },
+  villeNom: {
+    flex: 1,
+    border: "none",
+    borderBottom: "1.5px solid #ddd3c0",
+    background: "transparent",
+    fontSize: 15.5,
+    fontWeight: 700,
+    fontFamily: "Georgia, serif",
+    padding: "2px 0",
+    color: "#2b2620"
+  },
+  villeSlots: {
+    fontSize: 11,
+    color: "#a89e8a",
+    whiteSpace: "nowrap"
+  },
+  villeDel: {
+    border: "none",
+    background: "transparent",
+    color: "#c0392b",
+    cursor: "pointer",
+    fontSize: 14,
+    padding: 2
+  },
+  modeToggle: {
+    display: "flex",
+    gap: 4,
+    marginBottom: 14,
+    background: "#f0eadd",
+    padding: 3,
+    borderRadius: 4,
+    border: "1px solid #e6ddca"
+  },
+  modeBtn: {
+    flex: 1,
+    border: "none",
+    background: "transparent",
+    padding: "6px 8px",
+    fontSize: 11.5,
+    fontWeight: 600,
+    color: "#9a8f7e",
+    cursor: "pointer",
+    borderRadius: 3,
+    fontFamily: "inherit"
+  },
+  modeBtnOn: {
+    background: "#2b2620",
+    color: "#f7f3ec"
+  },
+  manualGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 8,
+    marginBottom: 12
+  },
+  manualField: {
+    display: "block"
+  },
+  manualLabel: {
+    display: "block",
+    fontSize: 11,
+    fontWeight: 700,
+    marginBottom: 4
+  },
+  manualInput: {
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "8px 8px",
+    fontSize: 14,
+    fontWeight: 600,
+    border: "1px solid #d2c8b6",
+    borderRadius: 3,
+    background: "#fcfaf5",
+    fontFamily: "inherit",
+    color: "#2b2620"
+  },
+  empty: {
+    fontSize: 12.5,
+    color: "#b0a690",
+    fontStyle: "italic",
+    padding: "8px 0"
+  },
+  batList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 7,
+    marginBottom: 12
+  },
+  batRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8
+  },
+  batTag: {
+    color: "#fff",
+    fontSize: 11,
+    fontWeight: 600,
+    padding: "3px 7px",
+    borderRadius: 3,
+    width: 58,
+    textAlign: "center",
+    flexShrink: 0
+  },
+  batRange: {
+    flex: 1,
+    minWidth: 60
+  },
+  batBoost: {
+    fontSize: 12,
+    fontWeight: 700,
+    width: 38,
+    textAlign: "right",
+    flexShrink: 0
+  },
+  batProd: {
+    fontSize: 11.5,
+    color: "#8a7f6e",
+    width: 46,
+    textAlign: "right",
+    flexShrink: 0,
+    fontVariantNumeric: "tabular-nums"
+  },
+  batDel: {
+    border: "none",
+    background: "transparent",
+    color: "#c9bfa9",
+    cursor: "pointer",
+    fontSize: 12,
+    flexShrink: 0
+  },
+  addBatRow: {
+    display: "flex",
+    gap: 6,
+    marginBottom: 12
+  },
+  addBatBtn: {
+    flex: 1,
+    background: "#fff",
+    border: "1px solid",
+    borderRadius: 3,
+    padding: "6px 4px",
+    fontSize: 12,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontFamily: "inherit"
+  },
+  villeProd: {
+    display: "flex",
+    gap: 14,
+    justifyContent: "flex-end",
+    fontSize: 12.5,
+    fontWeight: 700,
+    borderTop: "1px solid #f0eadd",
+    paddingTop: 10,
+    fontVariantNumeric: "tabular-nums"
+  },
+  totalGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 16
+  },
+  totalCard: {
+    background: "#fff",
+    border: "1px solid #e0d7c6",
+    borderTop: "3px solid",
+    borderRadius: 3,
+    padding: "14px 16px"
+  },
+  totalNom: {
+    fontSize: 12,
+    color: "#6b6155",
+    marginBottom: 6
+  },
+  totalVal: {
+    fontFamily: "Georgia, serif",
+    fontSize: 30,
+    fontWeight: 700,
+    lineHeight: 1
+  },
+  totalUnit: {
+    fontSize: 13,
+    color: "#9a8f7e",
+    fontWeight: 400
+  },
+  totalSub: {
+    fontSize: 11.5,
+    color: "#a89e8a",
+    marginTop: 5
+  },
+  maxGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 16
+  },
+  maxCard: {
+    background: "#fff",
+    border: "1.5px solid",
+    borderRadius: 3,
+    padding: "18px 20px"
+  },
+  maxLabel: {
+    fontSize: 12,
+    fontWeight: 700,
+    marginBottom: 8
+  },
+  maxBig: {
+    fontFamily: "Georgia, serif",
+    fontSize: 36,
+    fontWeight: 700,
+    lineHeight: 1
+  },
+  maxUnit: {
+    fontSize: 14,
+    color: "#9a8f7e",
+    fontWeight: 400
+  },
+  maxSub: {
+    fontSize: 12,
+    color: "#6b6155",
+    marginTop: 7
+  },
+  mixControls: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 24,
+    marginBottom: 20
+  },
+  field: {
+    display: "block"
+  },
+  numInput: {
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "9px 12px",
+    fontSize: 17,
+    fontWeight: 700,
+    fontFamily: "Georgia, serif",
+    border: "1px solid #d2c8b6",
+    borderRadius: 3,
+    background: "#fcfaf5",
+    color: "#2b2620"
+  },
+  fieldLabel: {
+    display: "block",
+    fontSize: 12.5,
+    color: "#6b6155",
+    marginBottom: 8
+  },
+  range: {
+    width: "100%"
+  },
+  outRow: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 16,
+    marginBottom: 22
+  },
+  outUnit: {
+    border: "1.5px solid",
+    borderRadius: 3,
+    padding: "16px 20px",
+    textAlign: "center"
+  },
+  outUnitVal: {
+    fontFamily: "Georgia, serif",
+    fontSize: 32,
+    fontWeight: 700,
+    lineHeight: 1
+  },
+  outUnitLab: {
+    fontSize: 12,
+    color: "#6b6155",
+    marginTop: 4
+  },
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    fontSize: 13.5
+  },
+  th: {
+    textAlign: "left",
+    padding: "8px 10px",
+    borderBottom: "2px solid #2b2620",
+    fontSize: 11,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    color: "#6b6155"
+  },
+  thR: {
+    textAlign: "right",
+    padding: "8px 10px",
+    borderBottom: "2px solid #2b2620",
+    fontSize: 11,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    color: "#6b6155"
+  },
+  td: {
+    padding: "9px 10px",
+    borderBottom: "1px solid #ece5d8"
+  },
+  tdR: {
+    padding: "9px 10px",
+    borderBottom: "1px solid #ece5d8",
+    textAlign: "right",
+    fontVariantNumeric: "tabular-nums"
+  },
+  verdict: {
+    marginTop: 16,
+    padding: "12px 16px",
+    border: "1px solid",
+    borderRadius: 3,
+    fontSize: 13,
+    fontWeight: 500
+  },
+  footer: {
+    padding: "16px 32px",
+    fontSize: 11,
+    color: "#a89e8a",
+    textAlign: "center",
+    lineHeight: 1.5
+  }
 };
 
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+var root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(React.createElement(App));
 </script>
 </body>
 </html>
