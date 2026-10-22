@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geocracy · Calc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<script>
+  (function () { try { var t = localStorage.getItem('geocracy-calc:theme'); if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; document.documentElement.dataset.theme = t; } catch (e) {} })();
+</script>
+<style>
+  /* Direction visuelle « carte d'état-major » — clair : carte papier · sombre : poste de commandement nocturne */
+  :root {
+    --bg: #efe9db; --panel: #f9f6ee; --card: #ffffff; --ink: #26221a; --muted: #7c7361;
+    --line: #ddd3bf; --line-strong: #26221a; --gold: #9a7b3f;
+    --c-carottes: #c0661f; --c-bois: #5d8a3c; --c-eau: #2e7d92; --c-nrj: #a88a12;
+    --good: #2f7d3a; --warn: #a8660f; --bad: #c0392b;
+    --good-bg: #e3efdf; --warn-bg: #f6ead2; --bad-bg: #f6dfda; --info-bg: #e9e3d4;
+    --radius: 4px; --shadow: 0 1px 0 #fff inset, 0 14px 40px -22px rgba(60,45,25,.45);
+    --contours: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420'%3E%3Cg fill='none' stroke='%2326221a' stroke-opacity='.055' stroke-width='1.1'%3E%3Cpath d='M-20 80 Q 90 20 190 85 T 440 60'/%3E%3Cpath d='M-20 130 Q 100 65 200 130 T 440 110'/%3E%3Cpath d='M-20 185 Q 110 115 215 185 T 440 165'/%3E%3Cpath d='M-20 250 Q 120 175 225 245 T 440 230'/%3E%3Cpath d='M-20 320 Q 130 245 240 310 T 440 300'/%3E%3Cpath d='M-20 385 Q 140 320 250 380 T 440 370'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  :root[data-theme="dark"] {
+    --bg: #12161b; --panel: #1a2027; --card: #212932; --ink: #e8e3d6; --muted: #93917f;
+    --line: #323b45; --line-strong: #cfc9b8; --gold: #c9a45e;
+    --c-carottes: #e08a45; --c-bois: #85b35d; --c-eau: #56a8bd; --c-nrj: #d9c25a;
+    --good: #6fbf78; --warn: #e0a54f; --bad: #e07463;
+    --good-bg: #1f3325; --warn-bg: #3a2e1a; --bad-bg: #3b2220; --info-bg: #283039;
+    --shadow: 0 14px 40px -18px rgba(0,0,0,.7);
+    --contours: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420'%3E%3Cg fill='none' stroke='%23e8e3d6' stroke-opacity='.05' stroke-width='1.1'%3E%3Cpath d='M-20 80 Q 90 20 190 85 T 440 60'/%3E%3Cpath d='M-20 130 Q 100 65 200 130 T 440 110'/%3E%3Cpath d='M-20 185 Q 110 115 215 185 T 440 165'/%3E%3Cpath d='M-20 250 Q 120 175 225 245 T 440 230'/%3E%3Cpath d='M-20 320 Q 130 245 240 310 T 440 300'/%3E%3Cpath d='M-20 385 Q 140 320 250 380 T 440 370'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { color-scheme: light; } html[data-theme="dark"] { color-scheme: dark; }
+  body { background: var(--bg) var(--contours) repeat; color: var(--ink); font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 14px; line-height: 1.45; min-height: 100vh; transition: background-color .25s, color .25s; }
+  td, .num, .stat-n { font-variant-numeric: tabular-nums; }
+
+  /* Barre supérieure */
+  .topbar { display: flex; align-items: center; gap: 16px; max-width: 1000px; margin: 0 auto; padding: 14px 16px 0; flex-wrap: wrap; }
+  .brand { font-family: "Saira Condensed", "Arial Narrow", sans-serif; font-weight: 700; font-size: 20px; letter-spacing: .12em; text-transform: uppercase; }
+  .brand .dot { color: var(--gold); }
+  .tabs { display: flex; gap: 4px; margin-left: auto; background: color-mix(in srgb, var(--panel) 70%, var(--bg)); border: 1px solid var(--line); border-radius: var(--radius); padding: 3px; overflow-x: auto; max-width: 100%; }
+  .tab { border: none; background: transparent; color: var(--muted); font-weight: 600; font-size: 12.5px; padding: 8px 14px; border-radius: 3px; cursor: pointer; white-space: nowrap; font-family: inherit; }
+  .tab.active { background: var(--line-strong); color: var(--bg); }
+  .tab:not(.active):hover { color: var(--ink); }
+  #theme-toggle { border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: var(--radius); width: 34px; height: 34px; font-size: 15px; cursor: pointer; flex-shrink: 0; padding: 0; }
+
+  /* Cadre principal */
+  .container { max-width: 1000px; margin: 14px auto 40px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .head { padding: 26px 28px 20px; border-bottom: 2px solid var(--line-strong); }
+  .kicker { font-size: 11px; letter-spacing: .22em; font-weight: 700; color: var(--gold); margin-bottom: 8px; text-transform: uppercase; }
+  .head h1 { font-family: "Saira Condensed", "Arial Narrow", sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .015em; font-size: 32px; line-height: 1.05; margin-bottom: 6px; }
+  .sub { max-width: 680px; color: var(--muted); font-size: 13.5px; }
+  .panel { display: none; padding: 22px 28px; animation: rise .3s ease both; }
+  .panel.active { display: block; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .foot { padding: 14px 28px; font-size: 11px; color: var(--muted); text-align: center; border-top: 1px solid var(--line); }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; transition: box-shadow .15s; }
+  .card:hover { box-shadow: 0 4px 16px -10px rgba(0,0,0,.35); }
+  .card h3 { display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: .14em; font-weight: 700; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+  .card h4 { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 16px 0 10px; font-weight: 700; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .row-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; padding-bottom: 12px; border-bottom: 2px solid var(--line-strong); }
+  .row-head input.city-name { flex: 1; min-width: 140px; font-family: "Saira Condensed", sans-serif; font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: .03em; border: none; border-bottom: 1px dashed transparent; border-radius: 0; padding: 2px 0; background: transparent; }
+  .row-head input.city-name:hover, .row-head input.city-name:focus { border-bottom-color: var(--line); }
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .field label { font-size: 12.5px; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 12px; }
+  input, select { background: var(--card); border: 1px solid var(--line); border-radius: 3px; padding: 8px 10px; font-size: 14px; font-weight: 600; color: var(--ink); width: 100%; outline: none; font-family: inherit; }
+  input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+  input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input.sm { width: 74px; }
+  td select[data-f="type"] { min-width: 200px; } td select[data-f="lvl"] { min-width: 92px; }
+  td[id^="out-"] { white-space: normal; min-width: 200px; line-height: 1.4; }
+  button { background: var(--line-strong); color: var(--bg); border: none; border-radius: 3px; padding: 8px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  button:hover { opacity: .88; }
+  button.secondary { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  button.secondary:hover { border-color: var(--ink); opacity: 1; }
+  button.danger { background: transparent; color: var(--bad); border: 1px solid var(--bad); }
+  button.icon { padding: 5px 9px; }
+  button:disabled { cursor: not-allowed; }
+
+  .table-wrap { overflow-x: auto; margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--line-strong); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td.num, th.num { text-align: right; }
+  tbody tr:hover td { background: color-mix(in srgb, var(--gold) 6%, transparent); }
+
+  .muted { color: var(--muted); font-size: 12.5px; }
+  .ok { color: var(--good); } .warn { color: var(--warn); } .bad { color: var(--bad); }
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 12px; font-weight: 700; margin: 2px 4px 2px 0; border: 1px solid transparent; }
+  .pill.ok { background: var(--good-bg); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
+  .pill.warn { background: var(--warn-bg); border-color: color-mix(in srgb, var(--warn) 35%, transparent); }
+  .pill.bad { background: var(--bad-bg); border-color: color-mix(in srgb, var(--bad) 35%, transparent); }
+  .pill.info { background: var(--info-bg); color: var(--ink); border-color: var(--line); }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 14px; }
+  .stat { border: 1px solid var(--line); border-top: 3px solid var(--line-strong); border-radius: var(--radius); padding: 12px 14px; background: var(--panel); }
+  .stat-n { font-family: "Saira Condensed", sans-serif; font-size: 28px; font-weight: 700; line-height: 1.05; }
+  .stat-l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .stat-s { font-size: 12px; margin-top: 6px; font-weight: 600; }
+  .city-plan { border: 1px solid var(--line); border-left: 3px solid var(--gold); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 10px; font-size: 13.5px; background: var(--panel); line-height: 1.6; }
+  .city-plan b { font-weight: 700; }
+  ul.notes { padding-left: 1.2rem; font-size: 13.5px; line-height: 1.75; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .C { color: var(--c-carottes); } .B { color: var(--c-bois); } .E { color: var(--c-eau); } .NRJ { color: var(--c-nrj); }
+  label.C, label.B, label.E, label.NRJ { font-weight: 600; }
+  .seg { display: inline-flex; gap: 3px; background: color-mix(in srgb, var(--line) 45%, var(--panel)); border-radius: 4px; padding: 3px; }
+  .seg.full { display: flex; width: 100%; margin-bottom: 14px; flex-wrap: wrap; }
+  .seg.full .seg-btn { flex: 1; }
+  .seg-btn { border: none; background: transparent; color: var(--muted); padding: 8px 13px; font-size: 12.5px; font-weight: 700; border-radius: 3px; cursor: pointer; }
+  .seg-btn:hover { opacity: 1; color: var(--ink); }
+  .seg-btn.on { background: var(--line-strong); color: var(--bg); }
+  .exist-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 12px; }
+  .exist-card { border: 1px solid var(--line); border-top: 3px solid; border-radius: var(--radius); padding: 10px 12px; background: var(--panel); }
+  .exist-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 700; }
+  .count { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--info-bg); border: 1px solid var(--line); color: var(--ink); }
+  .exist-row { display: grid; grid-template-columns: 1fr 64px 24px; gap: 6px 8px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed var(--line); }
+  .exist-row .slide { grid-column: 1 / 4; display: flex; align-items: center; gap: 8px; }
+  .exist-row .slide span:first-child { font-size: 12px; color: var(--muted); }
+  .exist-row select, .exist-row input[type="number"] { padding: 5px 6px; font-size: 13px; }
+  .exist-row input[type="range"] { width: 100%; padding: 0; border: none; background: none; }
+  .exist-row .rv { font-size: 12px; font-weight: 700; text-align: right; white-space: nowrap; min-width: 40px; }
+  .exist-row .slide input[type="range"] { flex: 1; min-width: 0; }
+  .exist-sub { font-size: 12px; color: var(--muted); margin: 4px 0 8px; }
+  button.dashed { width: 100%; background: transparent; border: 1px dashed var(--line); color: var(--muted); padding: 6px; }
+  button.dashed:hover { border-color: currentColor; color: var(--ink); }
+  button.x { background: transparent; color: var(--muted); border: none; padding: 2px 4px; font-size: 13px; }
+  button.x:hover { color: var(--bad); }
+  details.formulas { margin-top: 12px; }
+  details.formulas summary { cursor: pointer; font-weight: 700; font-size: 12.5px; color: var(--gold); margin-bottom: 6px; }
+  .need-line { padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--ink); font-size: 13.5px; }
+  @media (max-width: 640px) { .panel { padding: 16px; } .head { padding: 20px 16px 16px; } .head h1 { font-size: 26px; } .tabs { margin-left: 0; width: 100%; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+</head>
+<body>
+
+
+
+<div class="topbar">
+  <div class="brand">Geocracy<span class="dot">·</span>Calc</div>
+  <div class="tabs">
+    <button class="tab active" data-tab="villes">🏙️ Mes villes</button>
+    <button class="tab" data-tab="opti">⭐ Ville opti</button>
+    <button class="tab" data-tab="plan">🎯 Planificateur &amp; boost</button>
+    <button class="tab" data-tab="fiche">📜 Fiche</button>
+  </div>
+  <button id="theme-toggle" type="button" aria-label="Changer de thème">☾</button>
+</div>
+
+<div class="container">
+  <div class="head">
+    <div class="kicker">Saison 0 · MAZO</div>
+    <h1>Calculateur de production</h1>
+    <p class="sub">Villes, énergie, craft et plans optimisés, calculés à partir de la fiche « Production bâtiment ». Tout se calcule dans ton navigateur.</p>
+  </div>
+
+  <!-- ─────────── MES VILLES ─────────── -->
+  <div id="tab-villes" class="panel active">
+    <div class="card">
+      <h3>☁️ Sauvegarde en ligne</h3>
+      <div class="grid" style="align-items:end">
+        <div class="field"><label>Mon pseudo</label><input type="text" id="cloud-pseudo" placeholder="ex: Sbire"></div>
+        <div class="field"><button id="cloud-login">Se connecter</button></div>
+        <div class="field"><label>Voir les villes de</label><select id="cloud-view"><option value="">— mes villes —</option></select></div>
+      </div>
+      <div id="cloud-status" class="muted">Hors ligne : les villes sont sauvegardées uniquement dans ce navigateur.</div>
+    </div>
+    <div class="card">
+      <h3>Bilan global (toutes les villes)</h3>
+      <div id="global"></div>
+    </div>
+    <div class="actions" style="margin-bottom:1rem">
+      <button id="add-city">+ Ajouter une ville</button>
+      <button class="secondary" id="reset-cities">Tout réinitialiser</button>
+    </div>
+    <div id="cities"></div>
+  </div>
+
+  <!-- ─────────── VILLE OPTI ─────────── -->
+  <div id="tab-opti" class="panel">
+    <div class="card">
+      <h3>Ville autonome : casernes + ressources + énergie dans une seule ville</h3>
+      <div class="grid">
+        <div class="field"><label>Nb de casernes</label><select id="o-nk"><option value="1">1 caserne</option><option value="2" selected>2 casernes</option></select></div>
+        <div class="field"><label>Niveau caserne</label><select id="o-lk"></select></div>
+        <div class="field"><label>Bâtiments max dans la ville</label><input type="number" id="o-slots" min="10" max="15" value="15"></div>
+        <div class="field"><label class="NRJ">Centrale — niveau</label><select id="o-l-centrale"></select></div>
+      </div>
+      <div class="grid">
+        <div class="field"><label class="C">Champs de Carottes — niveau</label><select id="o-l-carottes"></select></div>
+        <div class="field"><label class="C">Boost Carottes %</label><input type="number" id="o-b-carottes" min="0" max="100" value="100"></div>
+        <div class="field"><label class="B">Usine de Bois — niveau</label><select id="o-l-bois"></select></div>
+        <div class="field"><label class="B">Boost Bois %</label><input type="number" id="o-b-bois" min="0" max="100" value="100"></div>
+        <div class="field"><label class="E">Usine d'Eau — niveau</label><select id="o-l-eau"></select></div>
+        <div class="field"><label class="E">Boost Eau %</label><input type="number" id="o-b-eau" min="0" max="100" value="0"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>⭐ Ville polyvalente — tourne à 100 % quelle que soit l'unité (hors Héraut)</h3>
+      <div id="opti-poly"></div>
+    </div>
+    <div class="card">
+      <h3>Ville optimale par unité</h3>
+      <div id="opti-units"></div>
+    </div>
+  </div>
+
+  <!-- ─────────── PLANIFICATEUR ─────────── -->
+  <div id="tab-plan" class="panel">
+    <div class="card">
+      <h3>1 — Production visée</h3>
+      <div class="seg full" id="p-mode">
+        <button type="button" class="seg-btn" data-mode="casernes">🏰 Faire tourner des casernes</button>
+        <button type="button" class="seg-btn" data-mode="libre">📦 Production libre (ressources /h)</button>
+      </div>
+      <div class="grid" id="p-box-casernes">
+        <div class="field"><label>Unité</label><select id="p-unit"></select></div>
+        <div class="field"><label>Nb de casernes</label><input type="number" id="p-nk" min="0" value="8"></div>
+        <div class="field"><label>Niveau caserne</label><select id="p-lk"></select></div>
+      </div>
+      <div class="grid" id="p-box-libre">
+        <div class="field"><label class="C">🥕 Carottes /h voulues</label><input type="number" id="p-want-C" min="0" value="0"></div>
+        <div class="field"><label class="B">🪵 Bois /h voulu</label><input type="number" id="p-want-B" min="0" value="0"></div>
+        <div class="field"><label class="E">💧 Eau /h voulue</label><input type="number" id="p-want-E" min="0" value="0"></div>
+      </div>
+      <div id="p-need" class="muted"></div>
+    </div>
+
+    <div class="card">
+      <div class="row-head" style="border-bottom:none;padding-bottom:0;margin-bottom:6px">
+        <h3 style="margin:0;flex:1">2 — Bâtiments déjà construits</h3>
+        <button class="secondary" id="p-import">↓ Reprendre depuis « Mes villes »</button>
+        <button class="secondary" id="p-clear">Vider</button>
+      </div>
+      <p class="muted" style="margin-bottom:12px">Ajoute tes bâtiments existants avec leur niveau et leur boost réel : leur production est déduite du besoin.</p>
+      <div class="exist-grid" id="p-exist"></div>
+    </div>
+
+    <div class="card">
+      <h3>3 — Bâtiments restants à construire</h3>
+      <div class="grid">
+        <div class="field"><label class="C">Nouveaux champs — niveau</label><select id="p-l-carottes"></select></div>
+        <div class="field"><label class="C">Boost prévu %</label><input type="number" id="p-b-carottes" min="0" max="100" value="100"></div>
+        <div class="field"><label class="B">Nouvelles usines bois — niveau</label><select id="p-l-bois"></select></div>
+        <div class="field"><label class="B">Boost prévu %</label><input type="number" id="p-b-bois" min="0" max="100" value="100"></div>
+        <div class="field"><label class="E">Nouvelles usines eau — niveau</label><select id="p-l-eau"></select></div>
+        <div class="field"><label class="E">Boost prévu %</label><input type="number" id="p-b-eau" min="0" max="100" value="0"></div>
+      </div>
+      <div id="plan-out"></div>
+      <details class="formulas">
+        <summary>ƒ Formules utilisées</summary>
+        <ul class="notes">
+          <li><b>Production d'un bâtiment</b> = base du niveau × (1 + boost / 100)</li>
+          <li><b>Reste à couvrir</b> = max(0, besoin − Σ production des existants)</li>
+          <li><b>Nb au boost prévu</b> = ⌈ reste / (base × (1 + boost prévu / 100)) ⌉</li>
+          <li><b>Nb mini</b> = ⌈ reste / (base × 2) ⌉ (bâtiments à 100 %)</li>
+          <li><b>Boost minimum</b> = (reste / (nb × base) − 1) × 100</li>
+        </ul>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>4 — Répartition des nouveaux bâtiments en villes autonomes</h3>
+      <div class="grid">
+        <div class="field"><label>Bâtiments max / ville</label><input type="number" id="p-slots" min="10" max="15" value="15"></div>
+        <div class="field"><label class="NRJ">Centrale — niveau</label><select id="p-l-centrale"></select></div>
+      </div>
+      <div id="plan-cities"></div>
+    </div>
+  </div>
+
+  <!-- ─────────── FICHE ─────────── -->
+  <div id="tab-fiche" class="panel">
+    <div id="fiche"></div>
+  </div>
+<div class="foot">Un plan ? On en avait un, on l'a perdu. — Données saison 0</div>
+</div>
+
+<script>
+// ═══════════════ DONNÉES (fiche saison 0) — à mettre à jour ici au prochain patch ═══════════════
+// prod = production de base / h (boost 0 %), conso = énergie consommée, stock = stock max du bâtiment
+var B = {
+  eau: { nom: "Usine d'Eau", res: 'E', icon: '💧',
+    conso: [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75],
+    prod:  [30,36,42,50,59,69,81,96,113,134,158,186,219,258,305],
+    stock: [150,184,226,279,343,422,519,638,785,966,1188,1462,1789,2212,2721] },
+  bois: { nom: 'Usine de Bois', res: 'B', icon: '🪵',
+    conso: [5,11,18,24,31,37,44,50,57,63,70,76,83,89,96],
+    prod:  [24,29,34,40,47,55,65,77,91,107,126,149,175,207,244],
+    stock: [120,147,181,223,274,337,415,511,628,773,951,1169,1438,1769,2176] },
+  carottes: { nom: 'Champs de Carottes', res: 'C', icon: '🥕',
+    conso: [15,30,45,60,75,90,105,120,135,150,165,180,195,210,225],
+    prod:  [30,36,42,50,59,69,81,96,113,134,158,186,219,258,305],
+    stock: [150,184,226,279,343,422,519,638,785,966,1188,1462,1789,2212,2721] },
+  centrale: { nom: 'Centrale', res: null, icon: '⚡',
+    energie: [72,85,101,119,140,165,195,230,271,320,377,445,525,620,731] },
+  caserne: { nom: 'Caserne', res: null, icon: '🏰',
+    conso: [20,56,92,128,164,200],
+    capacite: [150,225,300,375,450,525] }
+};
+// coût par unité (C = carottes, B = bois, E = eau), t = temps d'entraînement en minutes
+var U = {
+  soldat:     { nom: 'Soldat',     C: 10,   B: 5,    E: 2,    t: 1 },
+  convoyeur:  { nom: 'Convoyeur',  C: 5,    B: 10,   E: 5,    t: 0.75 },  // 0.45 = 45 s
+  archer:     { nom: 'Archer',     C: 15,   B: 20,   E: 10,   t: 5 },
+  protecteur: { nom: 'Protecteur', C: 5,    B: 10,   E: 10,   t: 1.5 },   // 1.30 = 1 min 30
+  eclaireur:  { nom: 'Éclaireur',  C: 5,    B: 5,    E: 0,    t: 10 },
+  heraut:     { nom: 'Héraut',     C: 1000, B: 9000, E: 7000, t: 60 }
+};
+var RES = { C: { nom: 'Carottes', cls: 'C', icon: '🥕' }, B: { nom: 'Bois', cls: 'B', icon: '🪵' }, E: { nom: 'Eau', cls: 'E', icon: '💧' } };
+var HERAUTS_CAPTURE = 2;
+var RECOLTE_MIN = 20; // minutes
+
+// ═══════════════ OUTILS ═══════════════
+function fmt(n) { return isFinite(n) ? Math.round(n).toLocaleString('fr-FR') : '∞'; }
+function fmt1(n) { return isFinite(n) ? (Math.round(n * 10) / 10).toLocaleString('fr-FR') : '∞'; }
+function fmtH(h) {
+  if (!isFinite(h)) return '∞';
+  if (h <= 0) return '0 min';
+  var tot = Math.round(h * 60), j = Math.floor(tot / 1440), hh = Math.floor((tot % 1440) / 60), m = tot % 60;
+  return (j ? j + ' j ' : '') + (hh ? hh + ' h ' : '') + (j ? '' : m + ' min');
+}
+function fmtT(min) { var s = Math.round(min * 60); return s < 60 ? s + ' s' : Math.floor(s / 60) + ' min' + (s % 60 ? ' ' + (s % 60) + ' s' : ''); }
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function num(v, d) { var n = parseFloat(v); return isNaN(n) ? d : n; }
+function maxLvl(type) { var b = B[type]; return (b.prod || b.energie || b.conso).length; }
+function lvlOptions(type, sel) {
+  var h = ''; for (var i = 1; i <= maxLvl(type); i++) h += '<option value="' + i + '"' + (i == sel ? ' selected' : '') + '>Niv. ' + i + '</option>';
+  return h;
+}
+function unitOptions(sel) { return Object.keys(U).map(function (k) { return '<option value="' + k + '"' + (k === sel ? ' selected' : '') + '>' + U[k].nom + '</option>'; }).join(''); }
+function unitsPerHour(u) { return 60 / U[u].t; }
+function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function load(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+
+// ═══════════════ ONGLETS ═══════════════
+document.querySelectorAll('.tab').forEach(function (t) {
+  t.addEventListener('click', function () {
+    document.querySelectorAll('.tab').forEach(function (x) { x.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function (x) { x.classList.remove('active'); });
+    t.classList.add('active');
+    document.getElementById('tab-' + t.dataset.tab).classList.add('active');
+  });
+});
+
+// ═══════════════ MES VILLES ═══════════════
+function newRow(type) { return { type: type || 'carottes', lvl: maxLvl(type || 'carottes'), boost: 0, qty: 1, unit: 'soldat' }; }
+function newCity(i) { return { nom: 'Ville ' + i, slots: 10, rows: [newRow('carottes')] }; }
+var cities = load('geo_calc_cities') || [newCity(1)];
+
+// ═══════════════ SAUVEGARDE EN LIGNE (Supabase, table calc_villes) ═══════════════
+var SUPA_URL = 'https://ufkqysrumwlydpkmowpd.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVma3F5c3J1bXdseWRwa21vd3BkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0NDAxNDcsImV4cCI6MjA5NDAxNjE0N30.mLCydtHj1rZxkIEv90ieb3I3l5gLy18HPwpPG9lzeIg';
+var cloud = { pseudo: load('geo_calc_pseudo') || '', viewing: '', timer: null };
+
+async function api(method, path, body, prefer) {
+  var res = await fetch(SUPA_URL + '/rest/v1/' + path, {
+    method: method,
+    headers: { 'Content-Type': 'application/json', apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY, Prefer: prefer || 'return=representation' },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!res.ok) throw new Error(await res.text());
+  var txt = await res.text();
+  return txt ? JSON.parse(txt) : [];
+}
+function cloudStatus(msg, cls) { var el = document.getElementById('cloud-status'); el.className = cls || 'muted'; el.innerHTML = msg; }
+function heure() { return new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
+
+// Toute modification passe par ici : sauvegarde locale + envoi en ligne 1,5 s après la dernière saisie
+function saveCities() {
+  if (cloud.viewing) return; // lecture seule sur les villes d'un autre joueur
+  store('geo_calc_cities', cities);
+  if (!cloud.pseudo) return;
+  clearTimeout(cloud.timer);
+  cloudStatus('⏳ Modifications en attente d\'envoi…');
+  cloud.timer = setTimeout(pushCloud, 1500);
+}
+async function pushCloud() {
+  try {
+    await api('POST', 'calc_villes?on_conflict=joueur', { joueur: cloud.pseudo, villes: cities, updated_at: new Date().toISOString() },
+      'resolution=merge-duplicates,return=minimal');
+    cloudStatus('☁️ Connecté en tant que <b>' + esc(cloud.pseudo) + '</b> — sauvegardé à ' + heure(), 'ok');
+  } catch (e) { cloudStatus('⚠️ Échec de la sauvegarde en ligne (gardée dans ce navigateur) : ' + esc(e.message), 'bad'); }
+}
+async function refreshPlayers() {
+  try {
+    var rows = await api('GET', 'calc_villes?select=joueur,updated_at&order=joueur.asc');
+    var sel = document.getElementById('cloud-view');
+    sel.innerHTML = '<option value="">— mes villes —</option>' + rows.filter(function (r) { return r.joueur !== cloud.pseudo; })
+      .map(function (r) { return '<option value="' + esc(r.joueur) + '">' + esc(r.joueur) + ' (' + new Date(r.updated_at).toLocaleDateString('fr-FR') + ')</option>'; }).join('');
+    sel.value = cloud.viewing;
+  } catch (e) {}
+}
+async function login(pseudo) {
+  pseudo = pseudo.trim(); if (!pseudo) return;
+  cloudStatus('⏳ Connexion…');
+  try {
+    var rows = await api('GET', 'calc_villes?joueur=ilike.' + encodeURIComponent('"' + pseudo + '"'));
+    if (rows.length) {
+      // Pseudo déjà connu : on récupère ses villes en ligne (écriture exacte du pseudo conservée)
+      cloud.pseudo = rows[0].joueur;
+      if (Array.isArray(rows[0].villes) && rows[0].villes.length) cities = rows[0].villes;
+      cloudStatus('☁️ Connecté en tant que <b>' + esc(cloud.pseudo) + '</b> — villes récupérées (sauvegarde du ' + new Date(rows[0].updated_at).toLocaleString('fr-FR') + ')', 'ok');
+    } else {
+      // Nouveau pseudo : on envoie les villes déjà saisies dans ce navigateur
+      cloud.pseudo = pseudo;
+      await pushCloud();
+    }
+    store('geo_calc_pseudo', cloud.pseudo); store('geo_calc_cities', cities);
+    document.getElementById('cloud-pseudo').value = cloud.pseudo;
+    document.getElementById('cloud-login').textContent = 'Changer de pseudo';
+    renderCities(); refreshPlayers();
+  } catch (e) {
+    cloudStatus('⚠️ Connexion impossible : ' + esc(e.message) + '<br>Vérifie que la table <b>calc_villes</b> existe dans Supabase.', 'bad');
+  }
+}
+async function viewPlayer(name) {
+  if (!name) { cloud.viewing = ''; cities = load('geo_calc_cities') || [newCity(1)]; setReadOnly(false); renderCities(); login(cloud.pseudo); return; }
+  try {
+    var rows = await api('GET', 'calc_villes?joueur=eq.' + encodeURIComponent(name));
+    if (!rows.length) return;
+    cloud.viewing = name; cities = rows[0].villes || []; setReadOnly(true); renderCities();
+    cloudStatus('👁️ Villes de <b>' + esc(name) + '</b> en lecture seule (mises à jour le ' + new Date(rows[0].updated_at).toLocaleString('fr-FR') + '). Choisis « mes villes » pour revenir aux tiennes.', 'warn');
+  } catch (e) { cloudStatus('⚠️ Chargement impossible : ' + esc(e.message), 'bad'); }
+}
+function setReadOnly(on) {
+  document.getElementById('cities').style.pointerEvents = on ? 'none' : '';
+  document.getElementById('cities').style.opacity = on ? '.85' : '';
+  ['add-city', 'reset-cities'].forEach(function (id) { document.getElementById(id).disabled = on; document.getElementById(id).style.opacity = on ? '.4' : ''; });
+}
+document.getElementById('cloud-login').addEventListener('click', function () { login(document.getElementById('cloud-pseudo').value); });
+document.getElementById('cloud-pseudo').addEventListener('keydown', function (e) { if (e.key === 'Enter') login(this.value); });
+document.getElementById('cloud-view').addEventListener('change', function () { viewPlayer(this.value); });
+
+function rowStats(r) {
+  var b = B[r.type], li = clamp(r.lvl | 0, 1, maxLvl(r.type)) - 1, q = Math.max(0, r.qty | 0);
+  var s = { qty: q, nrjIn: 0, nrjOut: 0, prod: { C: 0, B: 0, E: 0 }, use: { C: 0, B: 0, E: 0 }, units: 0 };
+  if (b.res) {
+    var per = b.prod[li] * (1 + clamp(num(r.boost, 0), 0, 100) / 100);
+    s.per = per; s.prod[b.res] = per * q; s.nrjOut = b.conso[li] * q;
+    s.stock = b.stock[li]; s.fill = b.stock[li] / per;
+  } else if (r.type === 'centrale') {
+    s.nrjIn = b.energie[li] * q;
+  } else {
+    var u = U[r.unit] || U.soldat, rate = unitsPerHour(r.unit) * q;
+    s.nrjOut = b.conso[li] * q; s.units = rate; s.cap = b.capacite[li];
+    s.use.C = rate * u.C; s.use.B = rate * u.B; s.use.E = rate * u.E;
+  }
+  return s;
+}
+function cityStats(c) {
+  var t = { slots: 0, nrjIn: 0, nrjOut: 0, prod: { C: 0, B: 0, E: 0 }, use: { C: 0, B: 0, E: 0 }, units: {} };
+  c.rows.forEach(function (r) {
+    var s = rowStats(r);
+    t.slots += s.qty; t.nrjIn += s.nrjIn; t.nrjOut += s.nrjOut;
+    ['C', 'B', 'E'].forEach(function (k) { t.prod[k] += s.prod[k]; t.use[k] += s.use[k]; });
+    if (r.type === 'caserne' && s.units) t.units[r.unit] = (t.units[r.unit] || 0) + s.units;
+  });
+  return t;
+}
+
+function rowOut(r) {
+  var s = rowStats(r);
+  if (B[r.type].res) {
+    return '<span class="' + B[r.type].res + '">' + fmt(s.prod[B[r.type].res]) + '/h</span> <span class="muted">(' + fmt(s.per) + ' chacun · plein en ' + fmtH(s.fill) + ') · ⚡−' + fmt(s.nrjOut) + '</span>';
+  }
+  if (r.type === 'centrale') return '<span class="NRJ">⚡ +' + fmt(s.nrjIn) + '</span>';
+  return fmt1(s.units) + ' ' + U[r.unit].nom.toLowerCase() + '/h <span class="muted">(file max ' + fmt(s.cap) + ' · ⚡−' + fmt(s.nrjOut) + ')</span>';
+}
+
+function citySummary(c) {
+  var t = cityStats(c), bal = t.nrjIn - t.nrjOut, h = '';
+  var sl = t.slots > c.slots ? 'bad' : t.slots === c.slots ? 'warn' : 'ok';
+  h += '<span class="pill ' + sl + '">🏗️ ' + t.slots + ' / ' + c.slots + ' bâtiments</span>';
+  h += '<span class="pill ' + (bal >= 0 ? 'ok' : 'bad') + '">⚡ ' + fmt(t.nrjIn) + ' produite / ' + fmt(t.nrjOut) + ' consommée (' + (bal >= 0 ? '+' : '') + fmt(bal) + ')</span>';
+  ['C', 'B', 'E'].forEach(function (k) { if (t.prod[k]) h += '<span class="pill info">' + RES[k].icon + ' ' + fmt(t.prod[k]) + '/h</span>'; });
+  if (bal < 0) {
+    var cl = B.centrale.energie[B.centrale.energie.length - 1];
+    h += '<div class="muted bad" style="margin-top:6px">Énergie insuffisante : il manque ' + fmt(-bal) + ' ⚡, soit ' + Math.ceil(-bal / cl) + ' centrale(s) niv. 15 de plus.</div>';
+  }
+  return h;
+}
+
+function renderCities() {
+  var html = '';
+  cities.forEach(function (c, ci) {
+    html += '<div class="card"><div class="row-head">' +
+      '<input class="city-name" data-c="' + ci + '" data-f="nom" value="' + esc(c.nom) + '">' +
+      '<label class="muted">Max bâtiments</label><input class="sm" type="number" min="10" max="15" data-c="' + ci + '" data-f="slots" value="' + c.slots + '">' +
+      '<button class="danger icon" data-act="del-city" data-c="' + ci + '" title="Supprimer la ville">✕</button></div>' +
+      '<div class="table-wrap"><table><thead><tr><th>Bâtiment</th><th>Niveau</th><th>Boost % / Unité</th><th>Qté</th><th>Résultat</th><th></th></tr></thead><tbody>';
+    c.rows.forEach(function (r, ri) {
+      var a = 'data-c="' + ci + '" data-r="' + ri + '"';
+      var typeSel = '<select ' + a + ' data-f="type">' + Object.keys(B).map(function (k) { return '<option value="' + k + '"' + (k === r.type ? ' selected' : '') + '>' + B[k].icon + ' ' + B[k].nom + '</option>'; }).join('') + '</select>';
+      var third = B[r.type].res ? '<input class="sm" type="number" min="0" max="100" ' + a + ' data-f="boost" value="' + r.boost + '">'
+        : r.type === 'caserne' ? '<select ' + a + ' data-f="unit">' + unitOptions(r.unit) + '</select>' : '<span class="muted">—</span>';
+      html += '<tr><td>' + typeSel + '</td><td><select ' + a + ' data-f="lvl">' + lvlOptions(r.type, r.lvl) + '</select></td>' +
+        '<td>' + third + '</td><td><input class="sm" type="number" min="0" ' + a + ' data-f="qty" value="' + r.qty + '"></td>' +
+        '<td id="out-' + ci + '-' + ri + '">' + rowOut(r) + '</td>' +
+        '<td><button class="secondary icon" data-act="del-row" ' + a + ' title="Retirer">✕</button></td></tr>';
+    });
+    html += '</tbody></table></div>' +
+      '<div class="actions" style="margin-bottom:10px"><button class="secondary" data-act="add-row" data-c="' + ci + '">+ Bâtiment</button></div>' +
+      '<div id="sum-' + ci + '">' + citySummary(c) + '</div></div>';
+  });
+  document.getElementById('cities').innerHTML = html || '<div class="card muted">Aucune ville. Ajoute ta première ville.</div>';
+  renderGlobal();
+}
+
+function renderGlobal() {
+  var g = { prod: { C: 0, B: 0, E: 0 }, use: { C: 0, B: 0, E: 0 }, units: {}, slots: 0 };
+  cities.forEach(function (c) {
+    var t = cityStats(c); g.slots += t.slots;
+    ['C', 'B', 'E'].forEach(function (k) { g.prod[k] += t.prod[k]; g.use[k] += t.use[k]; });
+    Object.keys(t.units).forEach(function (u) { g.units[u] = (g.units[u] || 0) + t.units[u]; });
+  });
+  var h = '<div class="stats">';
+  ['C', 'B', 'E'].forEach(function (k) {
+    var bal = g.prod[k] - g.use[k];
+    h += '<div class="stat"><div class="stat-n ' + RES[k].cls + '">' + fmt(g.prod[k]) + '/h</div><div class="stat-l">' + RES[k].icon + ' ' + RES[k].nom + ' produits</div>' +
+      '<div class="stat-s ' + (bal >= 0 ? 'ok' : 'bad') + '">casernes : −' + fmt(g.use[k]) + ' → solde ' + (bal >= 0 ? '+' : '') + fmt(bal) + '/h</div></div>';
+  });
+  h += '</div>';
+
+  // Craft réel : si une ressource manque, la production d'unités est limitée
+  var units = Object.keys(g.units);
+  if (units.length) {
+    var ratio = 1, goulot = null;
+    ['C', 'B', 'E'].forEach(function (k) { if (g.use[k] > 0) { var r = g.prod[k] / g.use[k]; if (r < ratio) { ratio = r; goulot = k; } } });
+    h += '<div style="margin-bottom:10px">';
+    units.forEach(function (u) {
+      h += '<span class="pill ' + (ratio >= 1 ? 'ok' : 'warn') + '">🏰 ' + fmt1(g.units[u] * ratio) + ' ' + U[u].nom.toLowerCase() + '/h' + (ratio < 1 ? ' (au lieu de ' + fmt1(g.units[u]) + ')' : '') + '</span>';
+    });
+    if (goulot) h += '<div class="muted warn" style="margin-top:6px">Goulot : ' + RES[goulot].nom + ' — les casernes tournent à ' + Math.round(ratio * 100) + ' % de leur capacité.</div>';
+    h += '</div>';
+  }
+
+  // Hérauts pour une capture
+  var need = { C: U.heraut.C * HERAUTS_CAPTURE, B: U.heraut.B * HERAUTS_CAPTURE, E: U.heraut.E * HERAUTS_CAPTURE }, worst = 0, lim = null;
+  ['C', 'B', 'E'].forEach(function (k) {
+    var surplus = g.prod[k] - g.use[k], hrs = need[k] > 0 ? (surplus > 0 ? need[k] / surplus : Infinity) : 0;
+    if (hrs > worst) { worst = hrs; lim = k; }
+  });
+  h += '<div class="city-plan">📯 <b>Capture d\'une ville = ' + HERAUTS_CAPTURE + ' hérauts</b> : ' + fmt(need.C) + ' 🥕 · ' + fmt(need.B) + ' 🪵 · ' + fmt(need.E) + ' 💧 · ' +
+    fmtT(U.heraut.t * HERAUTS_CAPTURE) + ' d\'entraînement.<br><span class="muted">Avec ton surplus actuel : ressources réunies en <b>' + fmtH(worst) + '</b>' + (lim ? ' (limité par ' + RES[lim].nom + ')' : '') + '.</span></div>';
+  document.getElementById('global').innerHTML = h;
+}
+
+function updateOutputs() {
+  cities.forEach(function (c, ci) {
+    c.rows.forEach(function (r, ri) { var el = document.getElementById('out-' + ci + '-' + ri); if (el) el.innerHTML = rowOut(r); });
+    var s = document.getElementById('sum-' + ci); if (s) s.innerHTML = citySummary(c);
+  });
+  renderGlobal();
+  saveCities();
+}
+
+var citiesEl = document.getElementById('cities');
+citiesEl.addEventListener('input', function (e) {
+  var el = e.target, ci = el.dataset.c, ri = el.dataset.r, f = el.dataset.f;
+  if (ci == null || !f || el.tagName === 'SELECT') return;
+  var target = ri != null ? cities[ci].rows[ri] : cities[ci];
+  target[f] = f === 'nom' ? el.value : num(el.value, 0);
+  updateOutputs();
+});
+citiesEl.addEventListener('change', function (e) {
+  var el = e.target, ci = el.dataset.c, ri = el.dataset.r, f = el.dataset.f;
+  if (el.tagName !== 'SELECT' || ci == null) return;
+  var r = cities[ci].rows[ri];
+  if (f === 'type') { r.type = el.value; r.lvl = Math.min(r.lvl, maxLvl(r.type)); saveCities(); renderCities(); return; }
+  r[f] = f === 'lvl' ? parseInt(el.value) : el.value;
+  updateOutputs();
+});
+citiesEl.addEventListener('click', function (e) {
+  var b = e.target.closest('button[data-act]'); if (!b) return;
+  var ci = +b.dataset.c, act = b.dataset.act;
+  if (act === 'add-row') { var last = cities[ci].rows[0]; cities[ci].rows.unshift(newRow(last ? last.type : 'carottes')); }
+  if (act === 'del-row') cities[ci].rows.splice(+b.dataset.r, 1);
+  if (act === 'del-city') { if (!confirm('Supprimer « ' + cities[ci].nom + ' » ?')) return; cities.splice(ci, 1); }
+  saveCities(); renderCities();
+});
+document.getElementById('add-city').addEventListener('click', function () { cities.unshift(newCity(cities.length + 1)); saveCities(); renderCities(); });
+document.getElementById('reset-cities').addEventListener('click', function () {
+  if (!confirm('Effacer toutes les villes saisies ?')) return;
+  cities = [newCity(1)]; saveCities(); renderCities();
+});
+
+// ═══════════════ PLANIFICATEUR (+ seuils de boost) ═══════════════
+var P_IDS = ['p-unit', 'p-nk', 'p-lk', 'p-want-C', 'p-want-B', 'p-want-E', 'p-slots', 'p-l-carottes', 'p-b-carottes', 'p-l-bois', 'p-b-bois', 'p-l-eau', 'p-b-eau', 'p-l-centrale'];
+var plan = load('geo_calc_plan2') || {};
+plan.mode = plan.mode || 'casernes';
+plan.exist = plan.exist || { carottes: [], bois: [], eau: [] };
+var planSaved = load('geo_calc_plan') || {};
+
+(function initPlan() {
+  var sv = planSaved;
+  document.getElementById('p-unit').innerHTML = unitOptions(sv['p-unit'] || 'soldat');
+  document.getElementById('p-lk').innerHTML = lvlOptions('caserne', sv['p-lk'] || 6);
+  ['carottes', 'bois', 'eau', 'centrale'].forEach(function (t) { document.getElementById('p-l-' + t).innerHTML = lvlOptions(t, sv['p-l-' + t] || 15); });
+  P_IDS.forEach(function (id) { if (sv[id] != null && !/^p-l|p-unit/.test(id)) document.getElementById(id).value = sv[id]; });
+  P_IDS.forEach(function (id) { var el = document.getElementById(id); el.addEventListener('input', renderPlan); el.addEventListener('change', renderPlan); });
+  document.getElementById('p-mode').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-mode]'); if (!b) return; plan.mode = b.dataset.mode; savePlan(); syncMode(); renderPlan();
+  });
+  document.getElementById('p-import').addEventListener('click', importFromCities);
+  document.getElementById('p-clear').addEventListener('click', function () {
+    if (!confirm('Vider la liste des bâtiments déjà construits ?')) return;
+    plan.exist = { carottes: [], bois: [], eau: [] }; savePlan(); renderExist(); renderPlan();
+  });
+  syncMode();
+})();
+
+function savePlan() { store('geo_calc_plan2', plan); }
+function syncMode() {
+  document.querySelectorAll('#p-mode [data-mode]').forEach(function (b) { b.classList.toggle('on', b.dataset.mode === plan.mode); });
+  document.getElementById('p-box-casernes').style.display = plan.mode === 'casernes' ? '' : 'none';
+  document.getElementById('p-box-libre').style.display = plan.mode === 'libre' ? '' : 'none';
+}
+function importFromCities() {
+  var ex = { carottes: [], bois: [], eau: [] }, n = 0;
+  cities.forEach(function (c) { c.rows.forEach(function (r) {
+    if (ex[r.type] && (r.qty | 0) > 0) { ex[r.type].push({ lvl: r.lvl, boost: clamp(num(r.boost, 0), 0, 100), qty: r.qty | 0 }); n += r.qty | 0; }
+  }); });
+  if (!n) { alert('Aucun champ ni usine dans « Mes villes ».'); return; }
+  plan.exist = ex; savePlan(); renderExist(); renderPlan();
+}
+
+// Liste des bâtiments existants : rendu structurel séparé pour ne pas perdre le focus pendant la saisie
+function renderExist() {
+  var h = '';
+  RT.forEach(function (tp) {
+    var t = tp[0], k = tp[1], list = plan.exist[t], tot = 0, nb = 0;
+    list.forEach(function (e) { nb += e.qty; tot += e.qty * B[t].prod[e.lvl - 1] * (1 + e.boost / 100); });
+    h += '<div class="exist-card" style="border-top-color:var(--c-' + t + ')"><div class="exist-head"><span class="' + k + '">' + B[t].icon + ' ' + B[t].nom + '</span><span class="count">' + nb + '</span></div>';
+    list.forEach(function (e, i) {
+      var a = 'data-t="' + t + '" data-i="' + i + '"';
+      h += '<div class="exist-row"><select ' + a + ' data-f="lvl">' + lvlOptions(t, e.lvl) + '</select>' +
+        '<input type="number" min="1" title="Quantité" ' + a + ' data-f="qty" value="' + e.qty + '">' +
+        '<button class="x" data-act="del" ' + a + ' title="Retirer">✕</button>' +
+        '<div class="slide"><span>Boost</span><input type="range" min="0" max="100" step="5" style="accent-color:var(--c-' + t + ')" ' + a + ' data-f="boost" value="' + e.boost + '">' +
+        '<span class="rv ' + k + '" id="rv-' + t + '-' + i + '">' + e.boost + ' %</span></div></div>';
+    });
+    h += '<div class="exist-sub" id="es-' + t + '">' + (nb ? 'Produit déjà <b class="' + k + '">' + fmt(tot) + '/h</b>' : 'Aucun pour l\'instant') + '</div>' +
+      '<button class="dashed" data-act="add" data-t="' + t + '">+ ajouter</button></div>';
+  });
+  document.getElementById('p-exist').innerHTML = h;
+}
+var pExist = document.getElementById('p-exist');
+pExist.addEventListener('input', function (e) {
+  var el = e.target, t = el.dataset.t, i = el.dataset.i, f = el.dataset.f; if (!t || !f) return;
+  var row = plan.exist[t][i];
+  if (f === 'boost') { row.boost = +el.value; document.getElementById('rv-' + t + '-' + i).textContent = row.boost + ' %'; }
+  else if (f === 'qty') row.qty = Math.max(0, parseInt(el.value) || 0);
+  else if (f === 'lvl') row.lvl = parseInt(el.value);
+  savePlan(); updateExistSub(t); renderPlan();
+});
+pExist.addEventListener('click', function (e) {
+  var b = e.target.closest('button[data-act]'); if (!b) return;
+  var t = b.dataset.t;
+  if (b.dataset.act === 'add') plan.exist[t].push({ lvl: maxLvl(t), boost: 100, qty: 1 });
+  else plan.exist[t].splice(+b.dataset.i, 1);
+  savePlan(); renderExist(); renderPlan();
+});
+function existProd(t) { return plan.exist[t].reduce(function (s, e) { return s + e.qty * B[t].prod[e.lvl - 1] * (1 + e.boost / 100); }, 0); }
+function updateExistSub(t) {
+  var nb = plan.exist[t].reduce(function (s, e) { return s + e.qty; }, 0), k = B[t].res;
+  document.getElementById('es-' + t).innerHTML = nb ? 'Produit déjà <b class="' + k + '">' + fmt(existProd(t)) + '/h</b>' : 'Aucun pour l\'instant';
+  pExist.querySelector('[data-t="' + t + '"]').closest('.exist-card').querySelector('.count').textContent = nb;
+}
+
+function renderPlan() {
+  var v = {}; P_IDS.forEach(function (id) { v[id] = document.getElementById(id).value; }); store('geo_calc_plan', v);
+  var slots = clamp(parseInt(v['p-slots']) || 15, 1, 30), lC = parseInt(v['p-l-centrale']), cp = B.centrale.energie[lC - 1];
+  var nk = 0, lk = parseInt(v['p-lk']), need = { C: 0, B: 0, E: 0 }, needTxt;
+  if (plan.mode === 'casernes') {
+    var unit = v['p-unit'], u = U[unit]; nk = Math.max(0, parseInt(v['p-nk']) || 0);
+    var rate = unitsPerHour(unit) * nk;
+    ['C', 'B', 'E'].forEach(function (k) { need[k] = rate * u[k]; });
+    needTxt = '<b>' + fmt1(rate) + ' ' + u.nom.toLowerCase() + '/h</b> (' + nk + ' casernes × ' + fmt1(unitsPerHour(unit)) + '/h)';
+  } else {
+    ['C', 'B', 'E'].forEach(function (k) { need[k] = Math.max(0, num(v['p-want-' + k], 0)); });
+    needTxt = 'Production libre';
+  }
+  document.getElementById('p-need').innerHTML = '<div class="need-line">Besoin : ' + RT.map(function (tp) {
+    return '<b class="' + tp[1] + '">' + fmt(need[tp[1]]) + ' ' + RES[tp[1]].icon + '</b>'; }).join(' · ') + ' par heure → ' + needTxt + '</div>';
+
+  var res = {};
+  var h = '<div class="table-wrap"><table><thead><tr><th>Ressource</th><th class="num">Besoin /h</th><th class="num">Déjà produit</th><th class="num">Reste</th><th class="num">Nb au boost prévu</th><th class="num">Nb mini → boost min</th><th>Si j\'en construis…</th></tr></thead><tbody>';
+  RT.forEach(function (tp) {
+    var t = tp[0], k = tp[1], lvl = parseInt(v['p-l-' + t]), base = B[t].prod[lvl - 1], boost = clamp(num(v['p-b-' + t], 0), 0, 100);
+    var have = existProd(t), reste = Math.max(0, need[k] - have), per = base * (1 + boost / 100);
+    var n = reste > 0 ? Math.ceil(reste / per - 1e-9) : 0, nMini = reste > 0 ? Math.ceil(reste / (base * 2) - 1e-9) : 0;
+    var bMin = nMini ? Math.max(0, (reste / (nMini * base) - 1) * 100) : 0;
+    res[t] = { n: n, lvl: lvl };
+    var covered = reste <= 0;
+    h += '<tr><td class="' + k + '"><b>' + RES[k].icon + ' ' + RES[k].nom + '</b></td><td class="num">' + fmt(need[k]) + '</td><td class="num">' + fmt(have) + '</td>' +
+      '<td class="num">' + (covered ? (need[k] > 0 ? '<span class="ok">✓ couvert</span>' : '—') : '<b>' + fmt(reste) + '</b>') + '</td>' +
+      '<td class="num">' + (covered ? '—' : '<b>' + n + ' bât.</b> <span class="muted">à ' + boost + ' %</span>') + '</td>' +
+      '<td class="num">' + (covered ? '—' : '<b>' + nMini + ' bât.</b> à <b class="' + k + '">' + Math.ceil(bMin) + ' %</b> min') + '</td>' +
+      '<td>' + (covered ? '<span class="muted">rien à construire</span>' : '<input class="sm" type="number" min="1" data-minboost="' + t + '" data-need="' + reste + '" data-base="' + base + '" value="' + nMini + '"> <span id="mb-' + t + '"></span>') + '</td></tr>';
+  });
+  h += '</tbody></table></div><p class="muted"><b>Nb au boost prévu</b> : combien de nouveaux bâtiments il faut s\'ils ont le boost réglé ci-dessus. <b>Nb mini → boost min</b> : le minimum de bâtiments (comme à 100 %) et le boost qu\'ils doivent au moins atteindre. <b>Si j\'en construis…</b> : choisis ton nombre, l\'outil donne le boost minimum.</p>';
+  document.getElementById('plan-out').innerHTML = h;
+  document.querySelectorAll('[data-minboost]').forEach(function (inp) { inp.addEventListener('input', function () { minBoost(inp); }); minBoost(inp); });
+
+  // Répartition : casernes (mode casernes) + nouveaux bâtiments, chaque ville couvre sa propre énergie, 2 types de ressources max
+  var items = [];
+  for (var i = 0; i < nk; i++) items.push({ t: 'caserne', e: B.caserne.conso[lk - 1] });
+  RT.forEach(function (tp) { for (var j = 0; j < res[tp[0]].n; j++) items.push({ t: tp[0], e: B[tp[0]].conso[res[tp[0]].lvl - 1] }); });
+  var villes = [], cur = { items: {}, n: 0, e: 0 }, impossible = false;
+  items.forEach(function (it) {
+    if (1 + Math.ceil(it.e / cp) > slots) { impossible = true; return; }
+    var tropDeTypes = !cur.items[it.t] && Object.keys(cur.items).filter(function (x) { return x !== 'caserne'; }).length >= 2 && it.t !== 'caserne';
+    if (cur.n && (tropDeTypes || cur.n + 1 + Math.ceil((cur.e + it.e) / cp) > slots)) { villes.push(cur); cur = { items: {}, n: 0, e: 0 }; }
+    cur.items[it.t] = (cur.items[it.t] || 0) + 1; cur.n++; cur.e += it.e;
+  });
+  if (cur.n) villes.push(cur);
+  var tot = 0, totC = 0, hp = '';
+  villes.forEach(function (c, i) {
+    var nc = Math.ceil(c.e / cp); tot += c.n + nc; totC += nc;
+    var parts = Object.keys(c.items).map(function (t) { return c.items[t] + ' ' + B[t].icon + ' ' + B[t].nom; });
+    parts.push(nc + ' ' + B.centrale.icon + ' Centrale');
+    hp += '<div class="city-plan"><b>Ville ' + (i + 1) + (c.items.caserne ? ' — hub militaire' : '') + '</b> · ' + (c.n + nc) + ' / ' + slots + ' bâtiments<br>' + parts.join(' · ') +
+      '<br><span class="muted">⚡ ' + fmt(nc * cp) + ' produite / ' + fmt(c.e) + ' consommée</span></div>';
+  });
+  hp = '<div style="margin-bottom:10px"><span class="pill info">🏙️ ' + villes.length + ' nouvelle(s) ville(s)</span><span class="pill info">🏗️ ' + tot + ' bâtiments dont ' + totC + ' centrales</span></div>' + hp +
+    '<p class="muted">Seuls les nouveaux bâtiments' + (nk ? ' et les casernes' : '') + ' sont répartis ; tes bâtiments déjà construits restent où ils sont.</p>';
+  if (impossible) hp = '<div class="bad" style="margin-bottom:8px">Un bâtiment consomme trop d\'énergie pour tenir dans une ville de ' + slots + ' emplacements avec ce niveau de centrale.</div>' + hp;
+  document.getElementById('plan-cities').innerHTML = villes.length ? hp : '<div class="muted">Rien à construire : tes bâtiments existants couvrent déjà le besoin.</div>';
+}
+function minBoost(inp) {
+  var n = Math.max(1, parseInt(inp.value) || 1), need = +inp.dataset.need, base = +inp.dataset.base;
+  var b = (need / (n * base) - 1) * 100, el = document.getElementById('mb-' + inp.dataset.minboost);
+  if (need <= 0) el.innerHTML = '<span class="muted">aucun besoin</span>';
+  else if (b <= 0) el.innerHTML = '<span class="ok">0 % suffit</span>';
+  else if (b > 100) el.innerHTML = '<span class="bad">impossible (' + Math.ceil(need / (2 * base)) + ' bât. min)</span>';
+  else el.innerHTML = '<span class="warn">≥ ' + (Math.ceil(b * 100) / 100).toLocaleString('fr-FR') + ' % (≈ ' + Math.ceil(b) + ' %)</span>';
+}
+
+// ═══════════════ VILLE OPTI ═══════════════
+var O_IDS = ['o-nk', 'o-lk', 'o-slots', 'o-l-centrale', 'o-l-carottes', 'o-b-carottes', 'o-l-bois', 'o-b-bois', 'o-l-eau', 'o-b-eau'];
+var RT = [['carottes', 'C'], ['bois', 'B'], ['eau', 'E']];
+var optiLast = {};
+(function initOpti() {
+  var saved = load('geo_calc_opti') || {};
+  document.getElementById('o-lk').innerHTML = lvlOptions('caserne', saved['o-lk'] || 6);
+  ['carottes', 'bois', 'eau', 'centrale'].forEach(function (t) { document.getElementById('o-l-' + t).innerHTML = lvlOptions(t, saved['o-l-' + t] || 15); });
+  O_IDS.forEach(function (id) { if (saved[id] != null && !/^o-l/.test(id)) document.getElementById(id).value = saved[id]; });
+  O_IDS.forEach(function (id) { var el = document.getElementById(id); el.addEventListener('input', renderOpti); el.addEventListener('change', renderOpti); });
+})();
+
+function optiCfg() {
+  var v = {}; O_IDS.forEach(function (id) { v[id] = document.getElementById(id).value; }); store('geo_calc_opti', v);
+  var c = { nk: parseInt(v['o-nk']) || 1, lk: parseInt(v['o-lk']), slots: clamp(parseInt(v['o-slots']) || 15, 1, 30),
+    lC: parseInt(v['o-l-centrale']), res: {} };
+  c.cp = B.centrale.energie[c.lC - 1];
+  RT.forEach(function (tp) { var t = tp[0], l = parseInt(v['o-l-' + t]); c.res[t] = { lvl: l, per: B[t].prod[l - 1] * (1 + clamp(num(v['o-b-' + t], 0), 0, 100) / 100), conso: B[t].conso[l - 1] }; });
+  return c;
+}
+// Besoin /h des casernes pour une unité (ou le max sur plusieurs unités)
+function needFor(units, cfg) {
+  var n = { C: 0, B: 0, E: 0 };
+  units.forEach(function (u) { var r = unitsPerHour(u) * cfg.nk; ['C', 'B', 'E'].forEach(function (k) { n[k] = Math.max(n[k], r * U[u][k]); }); });
+  return n;
+}
+// Composition minimale d'une ville qui couvre ce besoin (casernes + ressources + centrales)
+function buildCity(need, cfg) {
+  var r = { n: {}, conso: cfg.nk * B.caserne.conso[cfg.lk - 1], total: cfg.nk };
+  RT.forEach(function (tp) {
+    var t = tp[0], n = need[tp[1]] > 0 ? Math.ceil(need[tp[1]] / cfg.res[t].per - 1e-9) : 0;
+    r.n[t] = n; r.conso += n * cfg.res[t].conso; r.total += n;
+  });
+  r.centrales = Math.ceil(r.conso / cfg.cp - 1e-9); r.total += r.centrales;
+  r.fits = r.total <= cfg.slots;
+  return r;
+}
+// Si la ville complète ne tient pas : % max de fonctionnement des casernes dans les emplacements dispo
+function maxFraction(need, cfg) {
+  if (buildCity(need, cfg).fits) return 1;
+  for (var f = 0.99; f > 0; f -= 0.01) {
+    var nd = { C: need.C * f, B: need.B * f, E: need.E * f };
+    if (buildCity(nd, cfg).fits) return f;
+  }
+  return 0;
+}
+function compoTxt(c, cfg) {
+  var p = [cfg.nk + ' 🏰 Caserne'];
+  RT.forEach(function (tp) { if (c.n[tp[0]]) p.push(c.n[tp[0]] + ' ' + B[tp[0]].icon + ' ' + B[tp[0]].nom); });
+  p.push(c.centrales + ' ⚡ Centrale');
+  return p.join(' · ');
+}
+function surplusTxt(c, need, cfg) {
+  return RT.map(function (tp) {
+    var prod = c.n[tp[0]] * cfg.res[tp[0]].per, s = prod - need[tp[1]];
+    return '<span class="' + tp[1] + '">' + RES[tp[1]].icon + ' ' + fmt(prod) + '/h</span> <span class="muted">(besoin ' + fmt(need[tp[1]]) + ', +' + fmt(s) + ')</span>';
+  }).join(' · ');
+}
+
+function renderOpti() {
+  var cfg = optiCfg(), all = Object.keys(U).filter(function (u) { return u !== 'heraut'; });
+  // Ville polyvalente
+  var need = needFor(all, cfg), c = buildCity(need, cfg), h = '';
+  optiLast.poly = { c: c, unit: 'soldat' };
+  h += '<div class="city-plan"><b>' + compoTxt(c, cfg) + '</b><br>' +
+    '<span class="pill ' + (c.fits ? 'ok' : 'bad') + '">🏗️ ' + c.total + ' / ' + cfg.slots + ' bâtiments</span>' +
+    '<span class="pill ok">⚡ ' + fmt(c.centrales * cfg.cp) + ' produite / ' + fmt(c.conso) + ' consommée</span><br>' + surplusTxt(c, need, cfg) + '</div>';
+  if (c.fits) {
+    h += '<p class="muted" style="margin-bottom:8px">Avec ces ' + cfg.nk + ' caserne(s), chaque unité tourne en continu : ' +
+      all.map(function (u) { return fmt1(unitsPerHour(u) * cfg.nk) + ' ' + U[u].nom.toLowerCase() + '/h'; }).join(' · ') + '.' +
+      (cfg.slots - c.total > 0 ? ' Il reste ' + (cfg.slots - c.total) + ' emplacement(s) libre(s).' : '') + '</p>';
+    h += '<button data-opti-add="poly">+ Ajouter cette ville dans « Mes villes »</button>';
+  } else {
+    var f = maxFraction(need, cfg), cf = buildCity({ C: need.C * f, B: need.B * f, E: need.E * f }, cfg);
+    h += '<p class="warn" style="margin-bottom:8px">Ne tient pas en ' + cfg.slots + ' bâtiments. Version qui tient : <b>' + compoTxt(cf, cfg) + '</b> (' + cf.total + ' bât.), les casernes tournent alors à <b>' + Math.round(f * 100) + ' %</b> sur l\'unité la plus gourmande.</p>';
+    optiLast.poly = { c: cf, unit: 'soldat' };
+    h += '<button data-opti-add="poly">+ Ajouter la version qui tient dans « Mes villes »</button>';
+  }
+  document.getElementById('opti-poly').innerHTML = h;
+
+  // Par unité
+  var t = '<div class="table-wrap"><table><thead><tr><th>Unité</th><th class="num">Unités /h</th><th class="num">🥕</th><th class="num">🪵</th><th class="num">💧</th><th class="num">⚡</th><th class="num">Total</th><th>Résultat</th><th></th></tr></thead><tbody>';
+  Object.keys(U).forEach(function (u) {
+    var nd = needFor([u], cfg), cu = buildCity(nd, cfg), f = cu.fits ? 1 : maxFraction(nd, cfg);
+    var shown = cu.fits ? cu : buildCity({ C: nd.C * f, B: nd.B * f, E: nd.E * f }, cfg);
+    optiLast[u] = { c: shown, unit: u };
+    var res = cu.fits ? '<span class="ok">✓ tient (' + (cfg.slots - cu.total) + ' libre)</span>'
+      : f > 0 ? '<span class="warn">' + Math.round(f * 100) + ' % max → ' + fmt1(unitsPerHour(u) * cfg.nk * f) + '/h</span>' : '<span class="bad">impossible</span>';
+    t += '<tr><td>' + U[u].nom + '</td><td class="num">' + fmt1(unitsPerHour(u) * cfg.nk) + '</td>' +
+      '<td class="num">' + shown.n.carottes + '</td><td class="num">' + shown.n.bois + '</td><td class="num">' + shown.n.eau + '</td><td class="num">' + shown.centrales + '</td>' +
+      '<td class="num"><b>' + shown.total + '</b>' + (cu.fits ? '' : ' <span class="muted">(' + cu.total + ' pour 100 %)</span>') + '</td><td>' + res + '</td>' +
+      '<td>' + (f > 0 ? '<button class="secondary icon" data-opti-add="' + u + '" title="Ajouter dans Mes villes">+</button>' : '') + '</td></tr>';
+  });
+  t += '</tbody></table></div><p class="muted">Composition minimale : casernes + juste assez de bâtiments pour l\'unité, + les centrales pour être autonome en énergie. Le Héraut coûte trop cher pour tourner en continu dans une seule ville : il se crafte sur stock.</p>';
+  document.getElementById('opti-units').innerHTML = t;
+}
+
+document.getElementById('tab-opti').addEventListener('click', function (e) {
+  var b = e.target.closest('button[data-opti-add]'); if (!b) return;
+  var o = optiLast[b.dataset.optiAdd], cfg = optiCfg(); if (!o) return;
+  var rows = [{ type: 'caserne', lvl: cfg.lk, boost: 0, qty: cfg.nk, unit: o.unit }];
+  RT.forEach(function (tp) {
+    if (o.c.n[tp[0]]) rows.push({ type: tp[0], lvl: cfg.res[tp[0]].lvl, boost: num(document.getElementById('o-b-' + tp[0]).value, 0), qty: o.c.n[tp[0]], unit: 'soldat' });
+  });
+  rows.push({ type: 'centrale', lvl: cfg.lC, boost: 0, qty: o.c.centrales, unit: 'soldat' });
+  cities.unshift({ nom: 'Ville opti ' + (b.dataset.optiAdd === 'poly' ? 'polyvalente' : U[o.unit].nom), slots: cfg.slots, rows: rows });
+  saveCities(); renderCities();
+  b.textContent = '✓ Ajoutée';
+});
+
+// ═══════════════ FICHE ═══════════════
+function renderFiche() {
+  var h = '';
+  ['eau', 'bois', 'carottes'].forEach(function (t) {
+    var b = B[t];
+    h += '<div class="card"><h3>' + b.icon + ' ' + b.nom + '</h3><div class="table-wrap"><table><thead><tr><th>Niv.</th><th class="num">⚡ Conso</th><th class="num">Prod base /h</th><th class="num">Prod 100 % /h</th><th class="num">Stock max</th><th class="num">Plein en (0 %)</th></tr></thead><tbody>';
+    b.prod.forEach(function (p, i) { h += '<tr><td>' + (i + 1) + '</td><td class="num">' + b.conso[i] + '</td><td class="num">' + p + '</td><td class="num">' + p * 2 + '</td><td class="num">' + fmt(b.stock[i]) + '</td><td class="num">' + fmtH(b.stock[i] / p) + '</td></tr>'; });
+    h += '</tbody></table></div></div>';
+  });
+  h += '<div class="card"><h3>⚡ Centrale</h3><div class="table-wrap"><table><thead><tr><th>Niv.</th><th class="num">Énergie produite</th></tr></thead><tbody>';
+  B.centrale.energie.forEach(function (e, i) { h += '<tr><td>' + (i + 1) + '</td><td class="num">' + e + '</td></tr>'; });
+  h += '</tbody></table></div></div>';
+  h += '<div class="card"><h3>🏰 Caserne</h3><div class="table-wrap"><table><thead><tr><th>Niv.</th><th class="num">⚡ Conso</th><th class="num">Capacité (file max)</th></tr></thead><tbody>';
+  B.caserne.conso.forEach(function (c, i) { h += '<tr><td>' + (i + 1) + '</td><td class="num">' + c + '</td><td class="num">' + B.caserne.capacite[i] + '</td></tr>'; });
+  h += '</tbody></table></div>';
+  h += '<h4>Coût d\'entraînement par unité</h4><div class="table-wrap"><table><thead><tr><th>Unité</th><th class="num">🥕</th><th class="num">🪵</th><th class="num">💧</th><th class="num">Temps</th><th class="num">Par caserne /h</th><th class="num">🥕/h</th><th class="num">🪵/h</th><th class="num">💧/h</th></tr></thead><tbody>';
+  Object.keys(U).forEach(function (k) {
+    var u = U[k], r = unitsPerHour(k);
+    h += '<tr><td>' + u.nom + '</td><td class="num">' + fmt(u.C) + '</td><td class="num">' + fmt(u.B) + '</td><td class="num">' + fmt(u.E) + '</td><td class="num">' + fmtT(u.t) + '</td><td class="num">' + fmt1(r) + '</td><td class="num">' + fmt(r * u.C) + '</td><td class="num">' + fmt(r * u.B) + '</td><td class="num">' + fmt(r * u.E) + '</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '<div class="card"><h3>📌 Règles</h3><ul class="notes">' +
+    '<li>Production exprimée par heure ; récolte possible au minimum toutes les ' + RECOLTE_MIN + ' min.</li>' +
+    '<li>Stock max atteint : le bâtiment ne produit plus, tout surplus est perdu.</li>' +
+    '<li>Boost topographique par bâtiment, de 0 à 100 % : prod = base × (1 + boost), max = base × 2.</li>' +
+    '<li>L\'énergie est une valeur fixe de la ville : produite par les centrales, consommée par les autres bâtiments.</li>' +
+    '<li>Une ville peut avoir entre 10 et 15 bâtiments.</li>' +
+    '<li>Capacité de caserne = nombre max d\'unités en file d\'entraînement en une fois (ex. niv. 1 : 150).</li>' +
+    '<li>Il faut ' + HERAUTS_CAPTURE + ' hérauts pour capturer une ville.</li></ul></div>';
+  document.getElementById('fiche').innerHTML = h;
+}
+
+(function () {
+  var btn = document.getElementById('theme-toggle');
+  function sync() { btn.textContent = document.documentElement.dataset.theme === 'dark' ? '☀' : '☾'; }
+  btn.addEventListener('click', function () {
+    var t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = t; try { localStorage.setItem('geocracy-calc:theme', t); } catch (e) {} sync();
+  });
+  sync();
+})();
+renderCities();
+renderOpti();
+renderExist();
+renderPlan();
+if (cloud.pseudo) { document.getElementById('cloud-pseudo').value = cloud.pseudo; login(cloud.pseudo); } else refreshPlayers();
+renderFiche();
+</script>
+</body>
+</html>
